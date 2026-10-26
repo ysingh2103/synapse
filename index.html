@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Starforge</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Starforge: every project Yuvraj Singh has built, in one place. Live demos, GitHub repos and what each one does.">
+<meta property="og:title" content="Starforge · Yuvraj Singh's project station">
+<meta property="og:description" content="Live 3D network labs, incident write-ups, a document-management system and an incident trainer, all in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero" id="top">
+  <canvas id="orrery" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="callsign"><span class="pulse" aria-hidden="true"></span>Station online · 5 projects in orbit</p>
+    <h1 class="wordmark" aria-label="Starforge">
+      <span>S</span><span>T</span><span>A</span><span>R</span><span>F</span><span>O</span><span>R</span><span>G</span><span>E</span>
+    </h1>
+    <p class="lede">The project station of <strong>Yuvraj Singh</strong>, IT support and network specialist in Toronto. Everything I've built to learn networking, servers, databases and incident response, with the code and the live demos one click away.</p>
+    <div class="hero-actions">
+      <a class="btn btn-solid" href="#projects">Explore the projects</a>
+      <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub profile</a>
+    </div>
+    <p class="hint" aria-hidden="true">Each orbiting body is a project. Click one to jump to it.</p>
+  </div>
+</header>
+
+<main id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Projects in orbit</h2>
+      <p>Sorted by how complete they are. Live demos run in your browser; the rest link to source code and write-ups.</p>
+    </div>
+
+    <ol class="manifest" id="manifest"><!-- filled by app.js --></ol>
+    <noscript>
+      <p>Turn on JavaScript to see the project cards. Repos: github.com/ysingh2103/retail-network, github.com/ysingh2103/Infra-lab, github.com/ysingh2103/docvault, github.com/ysingh2103/Ultron</p>
+    </noscript>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div>
+      <p class="foot-name">Yuvraj Singh</p>
+      <p class="foot-role">IT Network Support Specialist &amp; QA Analyst · Toronto, ON</p>
+    </div>
+    <ul class="foot-links">
+      <li><a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Personal site</a></li>
+      <li><button type="button" class="copy" id="copy-email" data-email="ys.gill21@gmail.com">ys.gill21@gmail.com</button></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
