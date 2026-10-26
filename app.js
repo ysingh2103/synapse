@@ -1,4 +1,4 @@
-/* Synapse — project data, card rendering and the 3D neural network.
+/* Synapse (Modern AI Startup theme) — project data, card rendering and the 3D neural network.
    To add a project: append an object to PROJECTS. The card, its star and its output neuron
    are generated automatically. `inputs` lists the SKILLS (by index) that feed it. */
 
@@ -17,7 +17,7 @@ const PROJECTS = [
     id: 'retail-network',
     name: 'Retail Network Lab',
     status: 'live', statusText: 'Live demo',
-    hue: '#d97757',   // Claude coral
+    hue: '#ffffff',
     tagline: 'An interactive 3D model of a retail company network: one head office and a 23-store chain.',
     about: 'Every device is wired the way a real retail environment would be. Click any device to inspect it, watch traffic move hop by hop, and work through realistic outages from first symptom to root cause.',
     highlights: [
@@ -35,7 +35,7 @@ const PROJECTS = [
     id: 'fault-trace',
     name: 'Store Fault Trace',
     status: 'live', statusText: 'Live prototype',
-    hue: '#f0a47a',   // peach
+    hue: '#e5e5e5',
     tagline: 'A live troubleshooting view for one store that traces any failure back to its root cause.',
     about: 'Break something on purpose, such as a frozen camera, a cut cable, a power cut, a worn UPS battery or an ISP outage. It follows the failure through the power and network chain, groups related alerts into one incident and says who to send.',
     highlights: [
@@ -53,7 +53,7 @@ const PROJECTS = [
     id: 'infra-lab',
     name: 'Self-Hosted Infrastructure Lab',
     status: 'live', statusText: 'Complete · 11 write-ups',
-    hue: '#f2d3a8',   // sand
+    hue: '#d4d4d4',
     tagline: 'A home lab built from scratch on VMware ESXi, with every failure diagnosed and documented like a real support ticket.',
     about: 'Linux administration, web and application servers, databases, containers, Kubernetes and monitoring. Each incident follows symptom, hypothesis, diagnostic steps, root cause, fix and verification.',
     highlights: [
@@ -71,7 +71,7 @@ const PROJECTS = [
     id: 'docvault',
     name: 'DocVault',
     status: 'build', statusText: 'In build · Phase 1 done',
-    hue: '#e86f6a',   // rose
+    hue: '#a3a3a3',
     tagline: 'A small document-management web app on the stack enterprise support teams run.',
     about: 'Upload, list, filter and download documents. Files live on disk and metadata in PostgreSQL, served by a Java servlet app on Tomcat 10 behind an NGINX reverse proxy.',
     highlights: [
@@ -89,7 +89,7 @@ const PROJECTS = [
     id: 'ultron',
     name: 'Ultron',
     status: 'early', statusText: 'Early build',
-    hue: '#f0eee6',   // ivory
+    hue: '#8a8a8a',
     tagline: 'A self-hosted incident trainer that injects real faults and times how long they take to fix.',
     about: 'Faults across Windows Server, Linux, IIS, Tomcat, SQL Server, Oracle, DB2, Active Directory and Kubernetes. The first pieces are running: a Flask health API and dashboard, and a heartbeat service that watches the lab server.',
     highlights: [
@@ -141,9 +141,6 @@ manifest.innerHTML = PROJECTS.map((p) => `
     </div>
   </li>`).join('');
 
-document.querySelector('.status-text').textContent =
-  `${SKILLS.length} skills in, ${PROJECTS.length} projects out`;
-
 /* ---------- Surge: every ~9 s a gold wave rises through the network
    and a sheen crosses the wordmark ---------- */
 if (!reduceMotion) {
@@ -158,19 +155,6 @@ if (!reduceMotion) {
     setTimeout(surge, 8000 + Math.random() * 3000);
   };
   setTimeout(surge, 3500);
-}
-
-/* ---------- Card tilt on pointer (desktop only) ---------- */
-if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
-  document.querySelectorAll('.dossier').forEach((card) => {
-    card.addEventListener('pointermove', (e) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      card.style.transform = `perspective(1200px) rotateX(${(-y * 3).toFixed(2)}deg) rotateY(${(x * 4).toFixed(2)}deg)`;
-    });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-  });
 }
 
 /* ---------- Copy email ---------- */
@@ -218,8 +202,8 @@ function dockAt(id) {
   } catch (e) { return; }   // no WebGL: the gradient background stays
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
-  // Claude palette: coral, peach, ivory (names kept short: GOLD = coral, GOLD_HI = hot peach)
-  const GOLD = '#d97757', GOLD_HI = '#ffd9c2', PEARL = '#f0eee6', SAPPHIRE = '#f0a47a';
+  // monochrome palette: greys with white signals
+  const GOLD = '#a3a3a3', GOLD_HI = '#ffffff', PEARL = '#e5e5e5', SAPPHIRE = '#737373';
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 400);
@@ -265,9 +249,9 @@ function dockAt(id) {
   const lineMat = (hex, op) => new THREE.LineBasicMaterial({
     color: hex, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false
   });
-  const ringA = new THREE.Line(circle(4.2), lineMat(PEARL, 0.55));
+  const ringA = new THREE.Line(circle(4.2), lineMat(PEARL, 0.35));
   const ringB = new THREE.Group();
-  [[0, 1.7], [2.2, 3.9], [4.5, 5.8]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 90, a, b), lineMat(GOLD, 0.85))));
+  [[0, 1.7], [2.2, 3.9], [4.5, 5.8]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 90, a, b), lineMat(GOLD, 0.5))));
   const ringC = new THREE.Line(circle(7.4), new THREE.LineDashedMaterial({
     color: SAPPHIRE, dashSize: 0.22, gapSize: 0.32, transparent: true, opacity: 0.45, depthWrite: false
   }));
@@ -278,8 +262,8 @@ function dockAt(id) {
     ticks.push(new THREE.Vector3(Math.cos(a) * r1, 0, Math.sin(a) * r1), new THREE.Vector3(Math.cos(a) * r2, 0, Math.sin(a) * r2));
   }
   const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(GOLD, 0.45));
-  const lens = glow(GOLD, 7); lens.material.opacity = 0.45;
-  const lensHot = glow(GOLD_HI, 2.6); lensHot.material.opacity = 0.7;
+  const lens = glow(GOLD, 6); lens.material.opacity = 0.16;
+  const lensHot = glow(GOLD_HI, 2.2); lensHot.material.opacity = 0.4;
   // surge wave: a ring that expands out of the base
   const wave = new THREE.Line(circle(1), lineMat(GOLD_HI, 0));
   base.add(ringA, ringB, ringC, tickRing, lens, lensHot, wave);
@@ -289,7 +273,7 @@ function dockAt(id) {
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
   /* ---- layout: input, three hidden layers, output ---- */
-  const LX = [-10, -5, 0, 5, 10];
+  const LX = [-7.2, -3.6, 0, 3.6, 7.2];
   const LAST = LX.length - 1;
   const column = (n, gap, x) => Array.from({ length: n }, (_, i) => new THREE.Vector3(x, ((n - 1) / 2 - i) * gap, 0));
   const grid = (x, n = 3) => {
@@ -302,7 +286,7 @@ function dockAt(id) {
     grid(LX[1]), grid(LX[2], 4), grid(LX[3]),
     column(PROJECTS.length, 1.38, LX[4])
   ];
-  const LAYER_HEX = [PEARL, GOLD, SAPPHIRE, '#c15f41', null];
+  const LAYER_HEX = [PEARL, '#8a8a8a', '#b5b5b5', '#8a8a8a', null];
 
   /* ---- neurons ---- */
   const neurons = layerPos.map((arr, li) => arr.map((p, ni) => {
@@ -347,7 +331,7 @@ function dockAt(id) {
   net.add(new THREE.LineSegments(eGeo, eMat));
 
   // resting wires: warm ivory near the ends, coral through the middle
-  const W_GOLD = new THREE.Color('#6a5a4c'), W_SAPH = new THREE.Color('#8a3d26'), FAINT = new THREE.Color('#1a1412');
+  const W_GOLD = new THREE.Color('#3d3d3d'), W_SAPH = new THREE.Color('#2a2a2a'), FAINT = new THREE.Color('#0e0e0e');
   const restAt = (depth) => {
     const t = Math.abs(depth / LAST - 0.5) * 2;   // 1 at the ends, 0 in the middle
     return W_SAPH.clone().lerp(W_GOLD, t);
@@ -510,11 +494,11 @@ function dockAt(id) {
     const hr = hero.getBoundingClientRect(), sr = space.getBoundingClientRect();
     const bandCX = sr.left - hr.left + sr.width / 2, bandCY = sr.top - hr.top + sr.height / 2;
     cx = bandCX;
-    const roomW = (W - (W > 600 ? 520 : 36)) * upp;   // leave room for labels on both sides
-    const s = Math.min((sr.height * upp) / 10.2, roomW / 21);
+    const roomW = (sr.width - (W > 600 ? 170 : 24)) * upp;   // labels may spill into the gutter beside the column
+    const s = Math.min((sr.height * upp) / 10.2, roomW / 15.6);
     rig.position.set((bandCX - W / 2) * upp, (H / 2 - bandCY) * upp, 0);
     rig.scale.setScalar(s);
-    blocks = [...document.querySelectorAll('.brand > *, .topnav, .copy > *, .cta > *')].map((el) => {
+    blocks = [...document.querySelectorAll('.topbar, .copy > *')].map((el) => {
       const r = el.getBoundingClientRect();
       return { l: r.left - hr.left - 12, r: r.right - hr.left + 12, t: r.top - hr.top - 10, b: r.bottom - hr.top + 8 };
     });
@@ -535,8 +519,9 @@ function dockAt(id) {
     v.copy(wp).project(camera);
     const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
     const left = x < cx;
-    const lx = left ? x - 170 : x + 16, rx = left ? x - 14 : x + 210;
-    const covered = blocks.some((b) => rx > b.l && lx < b.r && y > b.t && y < b.b);
+    const lw = el.offsetWidth || 150;                    // real label width
+    const lx = left ? x - 18 - lw : x + 20, rx = left ? x - 18 : x + 20 + lw;
+    const covered = blocks.some((b) => rx > b.l && lx < b.r && y + 10 > b.t && y - 10 < b.b);
     const depth = (wp.z - rig.position.z) / rig.scale.x;    // + is toward the viewer
     const facing = Math.max(0, Math.min(1, 0.5 + depth / 12));
     const hide = v.z > 1 || covered || W <= 600;
@@ -567,7 +552,7 @@ function dockAt(id) {
     ringB.rotation.y = -now * 0.2;
     ringC.rotation.y = now * 0.04;
     tickRing.rotation.y = -now * 0.06;
-    lensHot.material.opacity = 0.55 + Math.sin(now * 1.2) * 0.15;
+    lensHot.material.opacity = 0.32 + Math.sin(now * 1.2) * 0.08;
 
     eMat.opacity = ease;
 

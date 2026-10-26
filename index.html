@@ -7,65 +7,56 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Yuvraj Singh's Synapse, home to all his innovations. Live demos, GitHub repos and what each one does.">
 <meta property="og:title" content="Yuvraj Singh's Synapse">
-<meta property="og:description" content="Live 3D network labs, incident write-ups, a document-management system and an incident trainer, all in one place.">
+<meta property="og:description" content="Every project I've built, in one place: live 3D network labs, incident write-ups, a document-management system and an incident trainer.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ysingh2103.github.io/starforge/">
 <meta property="og:image" content="https://ysingh2103.github.io/starforge/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
-<meta property="og:image:alt" content="Yuvraj Singh's SYNAPSE: a coral neural network in a universe of stars and binary">
+<meta property="og:image:alt" content="Yuvraj Singh's Synapse: every project in one place, with a neural network of skills and projects">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://ysingh2103.github.io/starforge/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
-<canvas id="universe" aria-hidden="true"></canvas>
 
 <header class="hero" id="top">
   <canvas id="orrery" aria-hidden="true"></canvas>
+
+  <nav class="topbar" aria-label="Site">
+    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"></span>SYNAPSE</a>
+    <div class="topnav">
+      <a href="#projects">Projects</a>
+      <a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Portfolio</a>
+      <a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="nav-cta" href="#projects">Explore projects</a>
+    </div>
+  </nav>
+
   <div class="hero-inner">
-    <div class="hero-top">
-      <div class="brand">
-        <h1 class="title">
-          <span class="owner">Yuvraj Singh's</span>
-          <span class="wordmark">SYNAPSE</span>
-        </h1>
-        <p class="byline">Home to all his innovations</p>
+    <div class="copy">
+      <p class="callsign"><span class="pulse" aria-hidden="true"></span><span class="status-text">Yuvraj Singh's Synapse</span></p>
+      <h1 class="headline">Every project I've built, in one place.</h1>
+      <p class="lede">Home to all my innovations: live demos, source code and the skills behind each one, from networking labs to an incident trainer.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="#projects">Explore projects</a>
+        <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
       </div>
-      <nav class="topnav" aria-label="Site">
-        <a href="#projects">Projects</a>
-        <a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Portfolio</a>
-        <a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a>
-      </nav>
+      <p class="hint" aria-hidden="true">The network maps my skills to my projects. Drag to turn it; hover a skill to see what it powers.</p>
     </div>
-
     <div class="net-space" aria-hidden="true"></div>
-
-    <div class="hero-bottom">
-      <div class="copy">
-        <p class="callsign"><span class="pulse" aria-hidden="true"></span><span class="status-text">7 skills in, 5 projects out</span></p>
-        <p class="lede">My skills are the input layer, my projects are the outputs, and every signal you see is a path from one to the other. Each project has its code and live demo one click away.</p>
-      </div>
-      <div class="cta">
-        <div class="hero-actions">
-          <a class="btn btn-solid" href="#projects">Explore the projects</a>
-          <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub profile</a>
-        </div>
-        <p class="hint" aria-hidden="true">Drag to turn the network. Hover a skill to see what it powers.</p>
-      </div>
-    </div>
   </div>
 </header>
 
 <main id="projects">
   <div class="wrap">
     <div class="section-head">
-      <h2>The output layer</h2>
-      <p>Five projects, from live demos to systems still in the build. Each card lists the skills that feed it; hover one to light its path in the network.</p>
+      <h2>Projects</h2>
+      <p>Five projects, from live demos to systems still in the build. Hover a card to light its path in the network.</p>
     </div>
 
     <ol class="manifest" id="manifest"><!-- filled by app.js --></ol>
@@ -77,19 +68,17 @@
 
 <footer class="foot">
   <div class="wrap foot-inner">
-    <div>
-      <p class="foot-name">Yuvraj Singh</p>
-    </div>
+    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"></span>Yuvraj Singh</a>
     <ul class="foot-links">
+      <li><a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Portfolio</a></li>
       <li><a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a></li>
-      <li><a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Portfolio</a></li>
       <li><button type="button" class="copy-mail" id="copy-email" data-email="ys.gill21@gmail.com">ys.gill21@gmail.com</button></li>
     </ul>
   </div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

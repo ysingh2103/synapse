@@ -5,7 +5,7 @@
 **Every project I've built, in one place.**
 Live site: **https://ysingh2103.github.io/starforge/**
 
-Synapse is my project network, set in a universe of twinkling stars, nebulae and drifting streams of binary. A live 3D neural network in Claude coral and ivory sits at the centre: my skills form the input layer, three hidden layers sit in the middle, and each project is an output neuron. Signals travel through it, it turns slowly on its own (drag to turn it), and every few seconds a surge rises from the projector base beneath it. Hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
+Synapse is my project network, in a clean black-and-white style. A live 3D neural network sits beside the intro: my skills form the input layer, three hidden layers sit in the middle, and each project is an output neuron. It turns slowly on its own (drag to turn it), and hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
 
 ## Output layer
 
