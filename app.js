@@ -1,5 +1,5 @@
 /* Synapse — project data, card rendering and the 3D neural network.
-   To add a project: append an object to PROJECTS. The card and its output neuron
+   To add a project: append an object to PROJECTS. The card, its gem and its output neuron
    are generated automatically. `inputs` lists the SKILLS (by index) that feed it. */
 
 const SKILLS = [
@@ -17,7 +17,7 @@ const PROJECTS = [
     id: 'retail-network',
     name: 'Retail Network Lab',
     status: 'live', statusText: 'Live demo',
-    hue: '#ff4d3d',
+    hue: '#3ee6a8',   // emerald
     tagline: 'An interactive 3D model of a retail company network: one head office and a 23-store chain.',
     about: 'Every device is wired the way a real retail environment would be. Click any device to inspect it, watch traffic move hop by hop, and work through realistic outages from first symptom to root cause.',
     highlights: [
@@ -35,7 +35,7 @@ const PROJECTS = [
     id: 'fault-trace',
     name: 'Store Fault Trace',
     status: 'live', statusText: 'Live prototype',
-    hue: '#ff8a1f',
+    hue: '#6cb6ff',   // sapphire
     tagline: 'A live troubleshooting view for one store that traces any failure back to its root cause.',
     about: 'Break something on purpose, such as a frozen camera, a cut cable, a power cut, a worn UPS battery or an ISP outage. It follows the failure through the power and network chain, groups related alerts into one incident and says who to send.',
     highlights: [
@@ -53,7 +53,7 @@ const PROJECTS = [
     id: 'infra-lab',
     name: 'Self-Hosted Infrastructure Lab',
     status: 'live', statusText: 'Complete · 11 write-ups',
-    hue: '#ffc04d',
+    hue: '#ffbe55',   // topaz
     tagline: 'A home lab built from scratch on VMware ESXi, with every failure diagnosed and documented like a real support ticket.',
     about: 'Linux administration, web and application servers, databases, containers, Kubernetes and monitoring. Each incident follows symptom, hypothesis, diagnostic steps, root cause, fix and verification.',
     highlights: [
@@ -71,7 +71,7 @@ const PROJECTS = [
     id: 'docvault',
     name: 'DocVault',
     status: 'build', statusText: 'In build · Phase 1 done',
-    hue: '#ff3d7f',
+    hue: '#bb94ff',   // amethyst
     tagline: 'A small document-management web app on the stack enterprise support teams run.',
     about: 'Upload, list, filter and download documents. Files live on disk and metadata in PostgreSQL, served by a Java servlet app on Tomcat 10 behind an NGINX reverse proxy.',
     highlights: [
@@ -89,7 +89,7 @@ const PROJECTS = [
     id: 'ultron',
     name: 'Ultron',
     status: 'early', statusText: 'Early build',
-    hue: '#d9dee8',
+    hue: '#ff5a7a',   // ruby
     tagline: 'A self-hosted incident trainer that injects real faults and times how long they take to fix.',
     about: 'Faults across Windows Server, Linux, IIS, Tomcat, SQL Server, Oracle, DB2, Active Directory and Kubernetes. The first pieces are running: a Flask health API and dashboard, and a heartbeat service that watches the lab server.',
     highlights: [
@@ -107,9 +107,6 @@ const PROJECTS = [
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- Wordmark letter stagger ---------- */
-document.querySelectorAll('.wordmark span').forEach((s, i) => s.style.setProperty('--i', i));
-
 /* ---------- Render the project cards ---------- */
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const pretty = (url) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
@@ -117,7 +114,7 @@ const pretty = (url) => url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 const manifest = document.getElementById('manifest');
 manifest.innerHTML = PROJECTS.map((p) => `
   <li class="dossier" id="${p.id}" style="--hue:${p.hue}">
-    <div class="badge" aria-hidden="true"><span class="ring"></span><span class="planet"></span></div>
+    <div class="badge" aria-hidden="true"><span class="ring"></span><span class="gem"></span></div>
     <div class="body">
       <span class="status ${p.status}">${esc(p.statusText)}</span>
       <h3>${esc(p.name)}</h3>
@@ -144,31 +141,23 @@ manifest.innerHTML = PROJECTS.map((p) => `
     </div>
   </li>`).join('');
 
-const statusNode = document.querySelector('.callsign').lastChild;
-const STATUS = `Network online · ${SKILLS.length} inputs → ${PROJECTS.length} outputs`;
-statusNode.textContent = STATUS;
+document.querySelector('.status-text').textContent =
+  `${SKILLS.length} skills in, ${PROJECTS.length} projects out`;
 
-/* ---------- Periodic glitch: a brief signal intrusion every 6–12 s ---------- */
+/* ---------- Surge: every ~9 s a gold wave rises through the network
+   and a sheen crosses the wordmark ---------- */
 if (!reduceMotion) {
   const root = document.documentElement;
-  const bands = document.querySelectorAll('.glitch-layer i');
-  const MESSAGES = ['Signal intrusion detected', 'Unauthorized process · rerouting', 'Core integrity 97% · recovering'];
-  let msg = 0;
-  const glitch = () => {
+  const surge = () => {
     if (!document.hidden) {
-      bands.forEach((b) => {
-        b.style.top = (Math.random() * 100).toFixed(1) + '%';
-        b.style.height = (2 + Math.random() * 14).toFixed(0) + 'px';
-      });
-      root.classList.add('glitching');
-      statusNode.textContent = MESSAGES[msg++ % MESSAGES.length];
-      window.dispatchEvent(new CustomEvent('synapse:glitch'));
-      setTimeout(() => { root.classList.remove('glitching'); }, 640);
-      setTimeout(() => { statusNode.textContent = STATUS; }, 1400);
+      root.classList.remove('surge'); void root.offsetWidth;
+      root.classList.add('surge');
+      window.dispatchEvent(new CustomEvent('synapse:surge'));
+      setTimeout(() => root.classList.remove('surge'), 2700);
     }
-    setTimeout(glitch, 6000 + Math.random() * 6000);
+    setTimeout(surge, 8000 + Math.random() * 3000);
   };
-  setTimeout(glitch, 3200);
+  setTimeout(surge, 3500);
 }
 
 /* ---------- Card tilt on pointer (desktop only) ---------- */
@@ -213,10 +202,10 @@ function dockAt(id) {
 }
 
 /* ---------- 3D neural network ----------
-   Input layer = skills, two hidden layers, output layer = projects.
-   JARVIS cyan on the input side burns into Ultron orange toward the outputs.
-   It spins on its own; drag to turn it. Hover a skill or project to light
-   the path between them. */
+   Input layer = skills, three hidden layers, output layer = projects.
+   Gold signals travel through it and arrive in each project's gem colour.
+   It turns slowly on its own; drag to turn it. Hover a skill or a project to
+   light the path between them. */
 (function neuralNet() {
   const canvas = document.getElementById('orrery');
   if (!window.THREE || !canvas) return;
@@ -229,34 +218,34 @@ function dockAt(id) {
   } catch (e) { return; }   // no WebGL: the gradient background stays
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
-  const RED = '#ff2a1f', ORANGE = '#ff7a1a', EMBER = '#ffb36b', WHITE_HOT = '#ffe4c9';
+  const GOLD = '#e8c26e', GOLD_HI = '#fff0c4', PEARL = '#fff8ea', SAPPHIRE = '#7fb0ff';
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400);
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 400);
 
   const rig = new THREE.Group();   // placed in the centre band
-  const net = new THREE.Group();   // the network itself: spins and drags
-  net.position.y = 0.7;
+  const net = new THREE.Group();   // the network: turns and drags
+  net.position.y = 0.6;
   rig.add(net);
   scene.add(rig);
 
-  /* drifting dust */
-  let dust;
+  /* gold dust, drifting slowly upward */
+  const DUST = 900;
+  const dustPos = new Float32Array(DUST * 3);
   {
-    const N = 1500, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
-    const tint = [new THREE.Color('#ffffff'), new THREE.Color('#ff8a6a'), new THREE.Color('#ffc08a')];
-    for (let i = 0; i < N; i++) {
-      const r = 30 + Math.random() * 140;
-      const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
-      pos.set([r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th)], i * 3);
-      const c = tint[(Math.random() * 3) | 0];
+    const col = new Float32Array(DUST * 3);
+    const tint = [new THREE.Color('#ffffff'), new THREE.Color(GOLD_HI), new THREE.Color(GOLD), new THREE.Color('#aecbff')];
+    for (let i = 0; i < DUST; i++) {
+      dustPos.set([(Math.random() - 0.5) * 70, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40 - 6], i * 3);
+      const c = tint[(Math.random() * tint.length) | 0];
       col.set([c.r, c.g, c.b], i * 3);
     }
     const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
     g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    dust = new THREE.Points(g, new THREE.PointsMaterial({
-      size: 0.3, vertexColors: true, transparent: true, opacity: 0.7, depthWrite: false
+    var dust = new THREE.Points(g, new THREE.PointsMaterial({
+      size: 0.09, vertexColors: true, transparent: true, opacity: 0.75, depthWrite: false,
+      blending: THREE.AdditiveBlending
     }));
     scene.add(dust);
   }
@@ -267,7 +256,7 @@ function dockAt(id) {
     const g = c.getContext('2d');
     const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
     grd.addColorStop(0, 'rgba(255,255,255,1)');
-    grd.addColorStop(0.22, 'rgba(255,255,255,.5)');
+    grd.addColorStop(0.2, 'rgba(255,255,255,.55)');
     grd.addColorStop(1, 'rgba(255,255,255,0)');
     g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(c);
@@ -280,12 +269,12 @@ function dockAt(id) {
     return s;
   };
 
-  /* ---- holographic projector base (the JARVIS table) ---- */
+  /* ---- gold projector base ---- */
   const base = new THREE.Group();
-  base.position.y = -3.9;
+  base.position.y = -4.1;
   base.scale.setScalar(0.62);
   rig.add(base);
-  const circle = (r, seg = 160, from = 0, to = Math.PI * 2) => {
+  const circle = (r, seg = 180, from = 0, to = Math.PI * 2) => {
     const pts = [];
     for (let k = 0; k <= seg; k++) {
       const a = from + (to - from) * (k / seg);
@@ -296,67 +285,74 @@ function dockAt(id) {
   const lineMat = (hex, op) => new THREE.LineBasicMaterial({
     color: hex, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false
   });
-  const ringA = new THREE.Line(circle(4.2), lineMat(RED, 0.7));
-  const ringB = new THREE.Group();          // Ultron arcs
-  [[0, 1.9], [2.4, 3.6], [4.3, 5.9]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 80, a, b), lineMat(ORANGE, 0.8))));
-  const ringC = new THREE.Line(circle(7.2), new THREE.LineDashedMaterial({
-    color: EMBER, dashSize: 0.25, gapSize: 0.35, transparent: true, opacity: 0.35, depthWrite: false
+  const ringA = new THREE.Line(circle(4.2), lineMat(GOLD_HI, 0.7));
+  const ringB = new THREE.Group();
+  [[0, 1.7], [2.2, 3.9], [4.5, 5.8]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 90, a, b), lineMat(GOLD, 0.85))));
+  const ringC = new THREE.Line(circle(7.4), new THREE.LineDashedMaterial({
+    color: SAPPHIRE, dashSize: 0.22, gapSize: 0.32, transparent: true, opacity: 0.45, depthWrite: false
   }));
   ringC.computeLineDistances();
   const ticks = [];
-  for (let k = 0; k < 96; k++) {
-    const a = (k / 96) * Math.PI * 2, r1 = 6.3, r2 = k % 8 ? 6.55 : 6.9;
+  for (let k = 0; k < 120; k++) {
+    const a = (k / 120) * Math.PI * 2, r1 = 6.4, r2 = k % 10 ? 6.65 : 7.0;
     ticks.push(new THREE.Vector3(Math.cos(a) * r1, 0, Math.sin(a) * r1), new THREE.Vector3(Math.cos(a) * r2, 0, Math.sin(a) * r2));
   }
-  const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(ORANGE, 0.5));
-  const lens = glow(RED, 6.5); lens.material.opacity = 0.45;
-  const lensHot = glow(ORANGE, 3); lensHot.material.opacity = 0.5;
-  base.add(ringA, ringB, ringC, tickRing, lens, lensHot);
+  const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(GOLD, 0.45));
+  const lens = glow(GOLD, 7); lens.material.opacity = 0.4;
+  const lensHot = glow(GOLD_HI, 2.6); lensHot.material.opacity = 0.7;
+  // surge wave: a ring that expands out of the base
+  const wave = new THREE.Line(circle(1), lineMat(GOLD_HI, 0));
+  base.add(ringA, ringB, ringC, tickRing, lens, lensHot, wave);
 
   /* deterministic random so the wiring is the same on every visit */
   let seed = 11;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
-  /* ---- layout ---- */
-  const LX = [-7, -2.35, 2.35, 7];
+  /* ---- layout: input, three hidden layers, output ---- */
+  const LX = [-10, -5, 0, 5, 10];
+  const LAST = LX.length - 1;
   const column = (n, gap, x) => Array.from({ length: n }, (_, i) => new THREE.Vector3(x, ((n - 1) / 2 - i) * gap, 0));
-  const grid = (x) => {
+  const grid = (x, n = 3) => {
     const a = [];
-    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) a.push(new THREE.Vector3(x, (1 - r) * 1.5, (c - 1) * 1.6));
+    for (let r = 0; r < 3; r++) for (let c = 0; c < n; c++) a.push(new THREE.Vector3(x, (1 - r) * 1.55, (c - (n - 1) / 2) * 1.6));
     return a;
   };
-  const layerPos = [column(SKILLS.length, 1.12, LX[0]), grid(LX[1]), grid(LX[2]), column(PROJECTS.length, 1.32, LX[3])];
-  const LAYER_HEX = [WHITE_HOT, '#ff3b2f', '#ff8a1f', null];   // white-hot → red → Ultron orange
+  const layerPos = [
+    column(SKILLS.length, 1.15, LX[0]),
+    grid(LX[1]), grid(LX[2], 4), grid(LX[3]),
+    column(PROJECTS.length, 1.38, LX[4])
+  ];
+  const LAYER_HEX = [PEARL, GOLD, SAPPHIRE, GOLD_HI, null];
 
   /* ---- neurons ---- */
   const neurons = layerPos.map((arr, li) => arr.map((p, ni) => {
-    const isIn = li === 0, isOut = li === 3;
+    const isIn = li === 0, isOut = li === LAST;
     const hex = isOut ? PROJECTS[ni].hue : LAYER_HEX[li];
     const g = new THREE.Group();
     g.position.copy(p);
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(isOut ? 0.24 : isIn ? 0.17 : 0.15, 20, 20),
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(isOut ? 0.26 : isIn ? 0.18 : 0.14, 24, 24),
       new THREE.MeshBasicMaterial({ color: hex }));
-    const halo = glow(hex, isOut ? 2.9 : 1.8);
+    const halo = glow(hex, isOut ? 2.8 : 1.6);
     g.add(ball, halo);
     let shell = null;
     if (isOut || isIn) {
-      shell = new THREE.Mesh(new THREE.IcosahedronGeometry(isOut ? 0.55 : 0.32, 0),
-        new THREE.MeshBasicMaterial({ color: hex, wireframe: true, transparent: true, opacity: isOut ? 0.6 : 0.3 }));
+      shell = new THREE.Mesh(isOut ? new THREE.OctahedronGeometry(0.6, 0) : new THREE.IcosahedronGeometry(0.34, 0),
+        new THREE.MeshBasicMaterial({ color: isOut ? hex : GOLD, wireframe: true, transparent: true, opacity: isOut ? 0.75 : 0.4 }));
       g.add(shell);
     }
     net.add(g);
-    return { g, ball, halo, shell, act: 0, rest: isOut ? 0.6 : 0.34, li, ni, hex };
+    return { g, ball, halo, shell, act: 0, rest: isOut ? 0.55 : 0.3, li, ni, hex };
   }));
 
   /* ---- synapses ---- */
   const edges = [];
-  for (let l = 0; l < 3; l++) {
+  for (let l = 0; l < LAST; l++) {
     layerPos[l].forEach((A, a) => layerPos[l + 1].forEach((B, b) => edges.push({ l, a, b, A, B, h: rnd() })));
   }
   const usesProject = (k, e) =>
     e.l === 0 ? PROJECTS[k].inputs.includes(e.a)
-    : e.l === 2 ? e.b === k
-    : ((e.h * 7.13 + k * 0.371) % 1) < 0.28;
+    : e.l === LAST - 1 ? e.b === k
+    : ((e.h * 7.13 + k * 0.371 + e.l * 0.17) % 1) < 0.26;
   const projectsForSkill = (s) => PROJECTS.map((p, k) => (p.inputs.includes(s) ? k : -1)).filter((k) => k >= 0);
   const usesSkill = (s, e) => (e.l === 0 ? e.a === s : projectsForSkill(s).some((k) => usesProject(k, e)));
 
@@ -370,10 +366,12 @@ function dockAt(id) {
   });
   net.add(new THREE.LineSegments(eGeo, eMat));
 
-  // resting wires fade from dim cyan (inputs) to dim orange (outputs)
-  const DIM_C = new THREE.Color('#7a1d14'), DIM_O = new THREE.Color('#a8460f'), FAINT = new THREE.Color('#1c0806');
-  const restAt = (depth) => DIM_C.clone().lerp(DIM_O, depth / 3);
-  const tmp = new THREE.Color();
+  // resting wires: gold near the inputs and outputs, sapphire through the middle
+  const W_GOLD = new THREE.Color('#6e5527'), W_SAPH = new THREE.Color('#2b4da8'), FAINT = new THREE.Color('#141c4a');
+  const restAt = (depth) => {
+    const t = Math.abs(depth / LAST - 0.5) * 2;   // 1 at the ends, 0 in the middle
+    return W_SAPH.clone().lerp(W_GOLD, t);
+  };
   let focus = null;      // { kind: 'p' | 's', i, color }
   function paintEdges() {
     edges.forEach((e, i) => {
@@ -389,8 +387,8 @@ function dockAt(id) {
   paintEdges();
 
   /* ---- signal pulses ---- */
-  const pool = Array.from({ length: 420 }, () => {
-    const s = glow('#ffffff', 0.55);
+  const pool = Array.from({ length: 360 }, () => {
+    const s = glow('#ffffff', 0.6);
     s.visible = false;
     net.add(s);
     return { s, e: null, t0: 0, dur: 0, k: 1, free: true };
@@ -399,16 +397,15 @@ function dockAt(id) {
   function fire(e, delay, hex, strength) {
     const p = pool.find((q) => q.free);
     if (!p) return;
-    p.free = false; p.e = e; p.t0 = now + delay; p.dur = 0.55 + rnd() * 0.15; p.k = strength;
+    p.free = false; p.e = e; p.t0 = now + delay; p.dur = 1.15 + rnd() * 0.3; p.k = strength;
     p.s.material.color.set(hex);
-    p.s.scale.setScalar(strength > 0.6 ? 0.78 : 0.46);
+    p.s.scale.setScalar(strength > 0.6 ? 0.72 : 0.42);
   }
   let passIdx = 0;
-  const PASS_HEX = [WHITE_HOT, RED];   // signal heats up as it moves through the layers
   function forwardPass(k) {
     PROJECTS[k].inputs.forEach((s) => { neurons[0][s].act = 1; });
     edges.forEach((e) => {
-      if (usesProject(k, e)) fire(e, e.l * 0.62 + rnd() * 0.12, e.l < 2 ? PASS_HEX[e.l] : PROJECTS[k].hue, 1);
+      if (usesProject(k, e)) fire(e, e.l * 1.25 + rnd() * 0.2, e.l === LAST - 1 ? PROJECTS[k].hue : GOLD_HI, 1);
     });
   }
 
@@ -440,7 +437,7 @@ function dockAt(id) {
   });
 
   function setFocus(kind, i) {
-    const next = kind ? { kind, i, color: new THREE.Color(kind === 'p' ? PROJECTS[i].hue : ORANGE) } : null;
+    const next = kind ? { kind, i, color: new THREE.Color(kind === 'p' ? PROJECTS[i].hue : GOLD_HI) } : null;
     if ((!focus && !next) || (focus && next && focus.kind === next.kind && focus.i === next.i)) return;
     focus = next;
     paintEdges();
@@ -456,7 +453,6 @@ function dockAt(id) {
     if (focus && focus.kind === 's') projectsForSkill(focus.i).forEach(forwardPass);
   }
 
-  // hovering a card lights its path in the network
   document.querySelectorAll('.dossier').forEach((card, k) => {
     card.addEventListener('pointerenter', () => setFocus('p', k));
     card.addEventListener('pointerleave', () => setFocus(null));
@@ -465,7 +461,7 @@ function dockAt(id) {
   /* ---- picking ---- */
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
-  const pickNeurons = [...neurons[0], ...neurons[3]];
+  const pickNeurons = [...neurons[0], ...neurons[LAST]];
   const pickable = pickNeurons.map((n) => n.ball);
   function pick(ev) {
     const r = canvas.getBoundingClientRect();
@@ -477,10 +473,11 @@ function dockAt(id) {
     return n.li === 0 ? { kind: 's', i: n.ni } : { kind: 'p', i: n.ni };
   }
 
-  /* ---- rotation: auto-spin plus drag ---- */
-  const AUTO = 0.16;                      // rad/s, one turn every ~40 s
-  const rot = { y: -0.35, x: 0.12, vy: AUTO, tx: 0.12 };
+  /* ---- rotation: slow auto-turn plus drag ---- */
+  const AUTO = 0.08;                     // rad/s, one turn about every 80 s
+  const rot = { y: -0.3, x: 0.1, vy: AUTO, tx: 0.1 };
   const drag = { on: false, id: null, x: 0, y: 0, moved: 0, lastT: 0 };
+  let hoverKey = '';
 
   hero.addEventListener('pointerdown', (ev) => {
     if (ev.target.closest('a,button')) return;
@@ -495,9 +492,9 @@ function dockAt(id) {
       drag.moved += Math.abs(dx) + Math.abs(dy);
       const t = performance.now(), dt = Math.max(16, t - drag.lastT) / 1000;
       drag.lastT = t;
-      rot.y += dx * 0.009;
-      rot.vy = (dx * 0.009) / dt;           // fling speed
-      rot.tx = Math.max(-0.55, Math.min(0.6, rot.tx + dy * 0.005));
+      rot.y += dx * 0.006;
+      rot.vy = (dx * 0.006) / dt;
+      rot.tx = Math.max(-0.5, Math.min(0.55, rot.tx + dy * 0.004));
       return;
     }
     if (!hero.contains(ev.target) || ev.target.closest('.net-label')) return;
@@ -512,7 +509,6 @@ function dockAt(id) {
   const endDrag = () => { drag.on = false; hero.classList.remove('dragging'); };
   window.addEventListener('pointerup', endDrag);
   window.addEventListener('pointercancel', endDrag);
-  let hoverKey = '';
   hero.addEventListener('pointerleave', () => { if (!drag.on) { hoverKey = ''; setFocus(null); } });
   hero.addEventListener('click', (ev) => {
     if (ev.target.closest('a,button') || drag.moved > 6) return;
@@ -526,19 +522,19 @@ function dockAt(id) {
     W = hero.clientWidth; H = hero.clientHeight;
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
-    const camZ = W > 900 ? 18 : 22;
+    const camZ = W > 900 ? 20 : 24;
     camera.position.set(0, 0, camZ);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
-    const upp = (2 * Math.tan((25 * Math.PI) / 180) * camZ) / H;
+    const upp = (2 * Math.tan((23 * Math.PI) / 180) * camZ) / H;
     const hr = hero.getBoundingClientRect(), sr = space.getBoundingClientRect();
     const bandCX = sr.left - hr.left + sr.width / 2, bandCY = sr.top - hr.top + sr.height / 2;
     cx = bandCX;
-    const roomW = (W - (W > 600 ? 360 : 40)) * upp;
-    const s = Math.min((sr.height * upp) / 10, roomW / 14.8);
+    const roomW = (W - (W > 600 ? 520 : 36)) * upp;   // leave room for labels on both sides
+    const s = Math.min((sr.height * upp) / 10.2, roomW / 21);
     rig.position.set((bandCX - W / 2) * upp, (H / 2 - bandCY) * upp, 0);
     rig.scale.setScalar(s);
-    blocks = [...document.querySelectorAll('.hero-top > *, .hero-bottom > *')].map((el) => {
+    blocks = [...document.querySelectorAll('.brand > *, .topnav, .copy > *, .cta > *')].map((el) => {
       const r = el.getBoundingClientRect();
       return { l: r.left - hr.left - 12, r: r.right - hr.left + 12, t: r.top - hr.top - 10, b: r.bottom - hr.top + 8 };
     });
@@ -551,72 +547,81 @@ function dockAt(id) {
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) loop(); }).observe(hero);
 
   const v = new THREE.Vector3(), wp = new THREE.Vector3();
-  let intro = 0, nextPass = 1.2, nextAmbient = 0, glitchUntil = -1;
-  window.addEventListener('synapse:glitch', () => {
-    glitchUntil = now + 0.62;
-    for (let i = 0; i < 40; i++) fire(edges[(rnd() * edges.length) | 0], rnd() * 0.3, RED, 1);
-  });
+  let intro = 0, nextPass = 1.5, nextAmbient = 0, surgeAt = -10;
+  window.addEventListener('synapse:surge', () => { surgeAt = now; });
 
   function placeLabel(el, n) {
     n.g.getWorldPosition(wp);
     v.copy(wp).project(camera);
     const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
-    const left = x < cx;                               // label goes on the outside of the network
-    const lx = left ? x - 160 : x + 16, rx = left ? x - 14 : x + 200;
+    const left = x < cx;
+    const lx = left ? x - 170 : x + 16, rx = left ? x - 14 : x + 210;
     const covered = blocks.some((b) => rx > b.l && lx < b.r && y > b.t && y < b.b);
-    // fade labels on neurons turned away from the viewer
-    const depth = (wp.z - rig.position.z) / rig.scale.x;   // + is toward the viewer
-    const facing = Math.max(0, Math.min(1, 0.5 + depth / 9));
+    const depth = (wp.z - rig.position.z) / rig.scale.x;    // + is toward the viewer
+    const facing = Math.max(0, Math.min(1, 0.5 + depth / 12));
     const hide = v.z > 1 || covered || W <= 600;
     el.style.opacity = hide ? '0' : String((Math.min(1, intro * 1.5) * (0.25 + 0.75 * facing)).toFixed(2));
     el.style.pointerEvents = hide || facing < 0.3 ? 'none' : 'auto';
     el.style.zIndex = String(Math.round(facing * 10));
     el.style.transform = left
-      ? `translate(${(x - 16).toFixed(1)}px, ${(y - 11).toFixed(1)}px) translateX(-100%)`
-      : `translate(${(x + 18).toFixed(1)}px, ${(y - 11).toFixed(1)}px)`;
+      ? `translate(${(x - 18).toFixed(1)}px, ${(y - 12).toFixed(1)}px) translateX(-100%)`
+      : `translate(${(x + 20).toFixed(1)}px, ${(y - 12).toFixed(1)}px)`;
   }
 
   function frame(dt) {
     now += dt;
-    intro = Math.min(1, intro + dt * 0.5);
+    intro = Math.min(1, intro + dt * 0.35);
     const ease = 1 - Math.pow(1 - intro, 3);
 
     if (!drag.on) {
-      rot.vy += (AUTO - rot.vy) * Math.min(1, dt * 1.2);   // fling settles back to the auto-spin
+      rot.vy += (AUTO - rot.vy) * Math.min(1, dt * 0.8);
       rot.y += rot.vy * dt;
-      rot.tx += (0.12 - rot.tx) * dt * 0.4;                 // tilt eases back
+      rot.tx += (0.1 - rot.tx) * dt * 0.3;
     }
-    rot.x += (rot.tx - rot.x) * 0.12;
+    rot.x += (rot.tx - rot.x) * 0.08;
     net.rotation.set(rot.x, rot.y, 0);
-    net.scale.setScalar(0.7 + 0.3 * ease);
+    net.scale.setScalar(0.75 + 0.25 * ease);
 
     base.rotation.x = rot.x * 0.5;
-    ringA.rotation.y = now * 0.25;
-    ringB.rotation.y = -now * 0.4;
-    ringC.rotation.y = now * 0.08;
-    tickRing.rotation.y = -now * 0.12;
-    lensHot.material.opacity = 0.35 + Math.sin(now * 2.4) * 0.15;
-    dust.rotation.y = now * 0.01;
+    ringA.rotation.y = now * 0.12;
+    ringB.rotation.y = -now * 0.2;
+    ringC.rotation.y = now * 0.04;
+    tickRing.rotation.y = -now * 0.06;
+    lensHot.material.opacity = 0.55 + Math.sin(now * 1.2) * 0.15;
+
+    // dust drifts up and wraps
+    const dp = dust.geometry.attributes.position;
+    for (let i = 0; i < DUST; i++) {
+      let y = dp.getY(i) + dt * (0.12 + (i % 7) * 0.02);
+      if (y > 20) y = -20;
+      dp.setY(i, y);
+    }
+    dp.needsUpdate = true;
     eMat.opacity = ease;
 
-    // glitch: the network tears, flickers and floods red for a moment
-    if (now < glitchUntil) {
-      net.position.x = (rnd() - 0.5) * 0.5;
-      eMat.opacity = 0.3 + rnd() * 1.2;
+    // surge: a gold wave leaves the base and a flare climbs through the layers
+    const st = now - surgeAt;
+    if (st >= 0 && st < 3.2) {
+      const r = 1 + st * 3.2;
+      wave.scale.setScalar(r);
+      wave.material.opacity = Math.max(0, 0.9 - st / 3.2);
+      neurons.forEach((layer, li) => {
+        const t = st - li * 0.35;
+        if (t > 0 && t < 0.1) layer.forEach((n) => { n.act = Math.max(n.act, 0.8); });
+      });
       lensHot.material.opacity = 1;
-      if (rnd() < 0.5) neurons[(rnd() * 4) | 0].forEach((n) => { n.act = Math.max(n.act, rnd()); });
     } else {
-      net.position.x = 0;
+      wave.material.opacity = 0;
     }
 
     if (now > nextPass && !focus) {
       forwardPass(passIdx % PROJECTS.length);
       passIdx++;
-      nextPass = now + 1.7;
+      nextPass = now + 3.4;
     }
     if (now > nextAmbient) {
-      fire(edges[(rnd() * edges.length) | 0], 0, rnd() < 0.5 ? '#ff3b2f' : '#ff9a4d', 0.5);
-      nextAmbient = now + 0.03;
+      fire(edges[(rnd() * edges.length) | 0], 0, rnd() < 0.6 ? GOLD : SAPPHIRE, 0.45);
+      nextAmbient = now + 0.06;
     }
 
     pool.forEach((p) => {
@@ -636,16 +641,16 @@ function dockAt(id) {
     });
 
     neurons.forEach((layer) => layer.forEach((n) => {
-      n.act *= Math.exp(-dt * 2.2);
-      n.ball.scale.setScalar(1 + n.act * 0.7);
-      n.halo.material.opacity = (n.rest + n.act * 0.9) * ease;
-      if (n.shell) n.shell.rotation.set(now * 0.6 + n.ni, now * 0.8, 0);
+      n.act *= Math.exp(-dt * 1.1);
+      n.ball.scale.setScalar(1 + n.act * 0.6);
+      n.halo.material.opacity = (n.rest + n.act * 0.85) * ease;
+      if (n.shell) n.shell.rotation.set(now * 0.3 + n.ni, now * 0.4, 0);
     }));
-    outLabels.forEach((el, k) => el.classList.toggle('fire', neurons[3][k].act > 0.35));
+    outLabels.forEach((el, k) => el.classList.toggle('fire', neurons[LAST][k].act > 0.35));
     inLabels.forEach((el, s) => el.classList.toggle('fire', neurons[0][s].act > 0.35));
 
     neurons[0].forEach((n, i) => placeLabel(inLabels[i], n));
-    neurons[3].forEach((n, k) => placeLabel(outLabels[k], n));
+    neurons[LAST].forEach((n, k) => placeLabel(outLabels[k], n));
 
     renderer.render(scene, camera);
   }
@@ -670,7 +675,6 @@ function dockAt(id) {
     const still = () => { now = 4; frame(0); };
     still();
     window.addEventListener('resize', () => { resize(); still(); });
-    // drag still turns it, one frame at a time
     window.addEventListener('pointermove', () => { if (drag.on) frame(0); });
   } else {
     loop();

@@ -10,7 +10,7 @@
 <meta property="og:description" content="Live 3D network labs, incident write-ups, a document-management system and an incident trainer, all in one place.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,19 +19,31 @@
   <canvas id="orrery" aria-hidden="true"></canvas>
   <div class="hero-inner">
     <div class="hero-top">
-      <h1 class="wordmark" aria-label="Synapse" data-text="SYNAPSE">
-        <span>S</span><span>Y</span><span>N</span><span>A</span><span>P</span><span>S</span><span>E</span>
-      </h1>
-      <p class="callsign"><span class="pulse" aria-hidden="true"></span>Network online · 7 inputs → 5 outputs</p>
+      <div class="brand">
+        <h1 class="wordmark">SYNAPSE</h1>
+        <p class="byline">Yuvraj Singh, IT and network specialist in Toronto</p>
+      </div>
+      <nav class="topnav" aria-label="Site">
+        <a href="#projects">Projects</a>
+        <a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a>
+      </nav>
     </div>
+
     <div class="net-space" aria-hidden="true"></div>
+
     <div class="hero-bottom">
-    <p class="lede">The project network of <strong>Yuvraj Singh</strong>, IT and network specialist in Toronto. My skills are the input layer, my projects are the outputs, and every signal you see is a path from one to the other. Each project has its code and live demo one click away.</p>
-    <div class="hero-actions">
-      <a class="btn btn-solid" href="#projects">Explore the projects</a>
-      <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub profile</a>
-    </div>
-    <p class="hint" aria-hidden="true">Drag to rotate the network. Hover a skill to see what it powers, click a project to open it.</p>
+      <div class="copy">
+        <p class="callsign"><span class="pulse" aria-hidden="true"></span><span class="status-text">7 skills in, 5 projects out</span></p>
+        <p class="lede">My skills are the input layer, my projects are the outputs, and every signal you see is a path from one to the other. Each project has its code and live demo one click away.</p>
+      </div>
+      <div class="cta">
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="#projects">Explore the projects</a>
+          <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub profile</a>
+        </div>
+        <p class="hint" aria-hidden="true">Drag to turn the network. Hover a skill to see what it powers.</p>
+      </div>
     </div>
   </div>
 </header>
@@ -39,8 +51,8 @@
 <main id="projects">
   <div class="wrap">
     <div class="section-head">
-      <h2>Output layer</h2>
-      <p>Every project the network produces, sorted by how complete it is. Hover a card to light its path in the network above.</p>
+      <h2>The output layer</h2>
+      <p>Five projects, from live demos to systems still in the build. Each card lists the skills that feed it; hover one to light its path in the network.</p>
     </div>
 
     <ol class="manifest" id="manifest"><!-- filled by app.js --></ol>
@@ -54,18 +66,16 @@
   <div class="wrap foot-inner">
     <div>
       <p class="foot-name">Yuvraj Singh</p>
-      <p class="foot-role">IT Network Support Specialist &amp; QA Analyst · Toronto, ON</p>
+      <p class="foot-role">IT Network Support Specialist &amp; QA Analyst, Toronto</p>
     </div>
     <ul class="foot-links">
       <li><a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a></li>
       <li><a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Personal site</a></li>
-      <li><button type="button" class="copy" id="copy-email" data-email="ys.gill21@gmail.com">ys.gill21@gmail.com</button></li>
+      <li><button type="button" class="copy-mail" id="copy-email" data-email="ys.gill21@gmail.com">ys.gill21@gmail.com</button></li>
     </ul>
   </div>
 </footer>
-
-<div class="glitch-layer" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="app.js"></script>
