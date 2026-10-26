@@ -1,4 +1,6 @@
-# Synapse
+# Yuvraj Singh's Synapse
+
+*Home to all his innovations.*
 
 **Every project I've built, in one place.**
 Live site: **https://ysingh2103.github.io/starforge/**
