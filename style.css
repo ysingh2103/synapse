@@ -13,6 +13,7 @@
   --build:  #ffb547;
   --early:  #b394ff;
   --ai:     #9b7bff;   /* machine-violet glow */
+  --ultron: #ff7a1a;   /* Ultron core orange */
 
   --f-disp: 'Unbounded', 'Arial Black', system-ui, sans-serif;
   --f-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -53,7 +54,8 @@ a { color: inherit; }
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(120% 80% at 70% 40%, #17205a 0%, transparent 60%),
+    radial-gradient(38% 34% at 50% 52%, rgba(255, 122, 26, .13) 0%, transparent 70%),
+    radial-gradient(120% 80% at 50% 40%, #142464 0%, transparent 60%),
     radial-gradient(60% 50% at 10% 90%, #221a52 0%, transparent 70%),
     var(--void);
 }
@@ -78,13 +80,27 @@ a { color: inherit; }
   width: 100%;
   max-width: 1080px;
   margin: 0 auto;
-  padding: 500px var(--gutter-r) 72px var(--gutter-l);   /* top band holds the network */
+  padding: 36px var(--gutter-r) 64px var(--gutter-l);
+  display: grid;
+  grid-template-rows: auto auto auto;
   position: relative;
   z-index: 2;
   pointer-events: none;     /* let clicks reach the 3D satellites */
 }
 .hero-inner a, .hero-inner button { pointer-events: auto; }
 
+.hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+.hero-top .callsign { margin: 0; }
+.net-space { height: clamp(360px, 58svh, 560px); }   /* the network is drawn centred in here */
+.hero-bottom { display: grid; justify-items: start; }
+.hero.dragging { cursor: grabbing; user-select: none; }
+#orrery { touch-action: pan-y; }
 .callsign {
   display: inline-flex;
   align-items: center;
@@ -101,21 +117,21 @@ a { color: inherit; }
 }
 .pulse {
   width: 8px; height: 8px; border-radius: 50%;
-  background: var(--live);
-  box-shadow: 0 0 0 0 rgba(79, 224, 165, .6);
+  background: var(--ultron);
+  box-shadow: 0 0 0 0 rgba(255, 122, 26, .6);
   animation: pulse 2.4s infinite;
 }
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(79, 224, 165, .55); }
-  70%  { box-shadow: 0 0 0 10px rgba(79, 224, 165, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(79, 224, 165, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(255, 122, 26, .55); }
+  70%  { box-shadow: 0 0 0 10px rgba(255, 122, 26, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 122, 26, 0); }
 }
 
 .wordmark {
   margin: 0;
   font-family: var(--f-disp);
   font-weight: 800;
-  font-size: clamp(48px, 11vw, 128px);
+  font-size: clamp(40px, 7vw, 92px);
   letter-spacing: .02em;
   line-height: .9;
   display: flex;
@@ -124,7 +140,7 @@ a { color: inherit; }
 }
 .wordmark span {
   display: inline-block;
-  background: linear-gradient(180deg, #fff 10%, #c9e9ff 50%, var(--flare) 85%, var(--ai) 130%);
+  background: linear-gradient(100deg, #ecfcff 0%, var(--flare) 45%, #ffb36b 75%, var(--ultron) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -140,7 +156,7 @@ a { color: inherit; }
 
 .lede {
   max-width: 58ch;
-  margin: 22px 0 28px;
+  margin: 0 0 24px;
   font-size: clamp(16px, 2vw, 19px);
   color: #c6cff0;
 }
@@ -161,7 +177,7 @@ a { color: inherit; }
 .btn-solid { background: var(--flare); color: #04171c; }
 .btn-solid:hover { background: #93efff; }
 .btn-ghost { border: 1px solid var(--line); background: rgba(14, 20, 49, .55); backdrop-filter: blur(6px); }
-.btn-ghost:hover { border-color: var(--plasma); }
+.btn-ghost:hover { border-color: var(--ultron); }
 
 .hint {
   margin: 26px 0 0;
@@ -381,9 +397,6 @@ main { padding-block: 40px 96px; }
 .copy.done { color: var(--live); border-color: var(--live); }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .hero-inner { padding-top: 420px; }
-}
 @media (max-width: 920px) {
   .dossier { grid-template-columns: 84px minmax(0, 1fr); }
   .badge { width: 84px; height: 84px; }
@@ -396,7 +409,8 @@ main { padding-block: 40px 96px; }
   .badge { width: 64px; height: 64px; }
   .badge .planet { width: 24px; height: 24px; }
   .badge .ring { inset: 6px; }
-  .hero-inner { padding-top: 360px; padding-bottom: 48px; }
+  .hero-inner { padding-top: 24px; padding-bottom: 48px; }
+  .net-space { height: 300px; }
   .hint { display: none; }
 }
 

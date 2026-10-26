@@ -3,7 +3,7 @@
 **Every project I've built, in one place.**
 Live site: **https://ysingh2103.github.io/starforge/**
 
-Synapse is my project network. The page opens on a live 3D neural network: my skills form the input layer, two hidden layers sit in the middle, and each project is an output neuron. Signals fire forward through the network, and hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
+Synapse is my project network. The page opens on a live 3D neural network: my skills form the input layer, two hidden layers sit in the middle, and each project is an output neuron. Signals fire forward through the network, and hovering a skill lights up every project it powers. The network spins on its own and you can drag to turn it, above a JARVIS-style holographic base that runs from cyan into Ultron orange. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
 
 ## Output layer
 

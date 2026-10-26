@@ -190,12 +190,14 @@ function dockAt(id) {
 
 /* ---------- 3D neural network ----------
    Input layer = skills, two hidden layers, output layer = projects.
-   A forward pass fires every few seconds; hover a skill or a project to
-   light the path between them. */
+   JARVIS cyan on the input side burns into Ultron orange toward the outputs.
+   It spins on its own; drag to turn it. Hover a skill or project to light
+   the path between them. */
 (function neuralNet() {
   const canvas = document.getElementById('orrery');
   if (!window.THREE || !canvas) return;
   const hero = canvas.parentElement;
+  const space = document.querySelector('.net-space');
 
   let renderer;
   try {
@@ -203,19 +205,22 @@ function dockAt(id) {
   } catch (e) { return; }   // no WebGL: the gradient background stays
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
+  const CYAN = '#62e6ff', ORANGE = '#ff7a1a', EMBER = '#ffb36b';
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400);
-  camera.position.set(0, 1.2, 17);
 
-  const rig = new THREE.Group();   // placed per breakpoint
-  const net = new THREE.Group();   // turns with the pointer
+  const rig = new THREE.Group();   // placed in the centre band
+  const net = new THREE.Group();   // the network itself: spins and drags
+  net.position.y = 0.7;
   rig.add(net);
   scene.add(rig);
 
   /* drifting dust */
+  let dust;
   {
     const N = 1500, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
-    const tint = [new THREE.Color('#ffffff'), new THREE.Color('#9ff0ff'), new THREE.Color('#b9a6ff')];
+    const tint = [new THREE.Color('#ffffff'), new THREE.Color('#9ff0ff'), new THREE.Color('#ffc08a')];
     for (let i = 0; i < N; i++) {
       const r = 30 + Math.random() * 140;
       const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
@@ -226,7 +231,7 @@ function dockAt(id) {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    var dust = new THREE.Points(g, new THREE.PointsMaterial({
+    dust = new THREE.Points(g, new THREE.PointsMaterial({
       size: 0.3, vertexColors: true, transparent: true, opacity: 0.7, depthWrite: false
     }));
     scene.add(dust);
@@ -251,6 +256,39 @@ function dockAt(id) {
     return s;
   };
 
+  /* ---- holographic projector base (the JARVIS table) ---- */
+  const base = new THREE.Group();
+  base.position.y = -3.9;
+  base.scale.setScalar(0.62);
+  rig.add(base);
+  const circle = (r, seg = 160, from = 0, to = Math.PI * 2) => {
+    const pts = [];
+    for (let k = 0; k <= seg; k++) {
+      const a = from + (to - from) * (k / seg);
+      pts.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r));
+    }
+    return new THREE.BufferGeometry().setFromPoints(pts);
+  };
+  const lineMat = (hex, op) => new THREE.LineBasicMaterial({
+    color: hex, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const ringA = new THREE.Line(circle(4.2), lineMat(CYAN, 0.55));
+  const ringB = new THREE.Group();          // Ultron arcs
+  [[0, 1.9], [2.4, 3.6], [4.3, 5.9]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 80, a, b), lineMat(ORANGE, 0.8))));
+  const ringC = new THREE.Line(circle(7.2), new THREE.LineDashedMaterial({
+    color: CYAN, dashSize: 0.25, gapSize: 0.35, transparent: true, opacity: 0.35, depthWrite: false
+  }));
+  ringC.computeLineDistances();
+  const ticks = [];
+  for (let k = 0; k < 96; k++) {
+    const a = (k / 96) * Math.PI * 2, r1 = 6.3, r2 = k % 8 ? 6.55 : 6.9;
+    ticks.push(new THREE.Vector3(Math.cos(a) * r1, 0, Math.sin(a) * r1), new THREE.Vector3(Math.cos(a) * r2, 0, Math.sin(a) * r2));
+  }
+  const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(EMBER, 0.45));
+  const lens = glow(CYAN, 6); lens.material.opacity = 0.35;
+  const lensHot = glow(ORANGE, 3); lensHot.material.opacity = 0.5;
+  base.add(ringA, ringB, ringC, tickRing, lens, lensHot);
+
   /* deterministic random so the wiring is the same on every visit */
   let seed = 11;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -264,14 +302,15 @@ function dockAt(id) {
     return a;
   };
   const layerPos = [column(SKILLS.length, 1.12, LX[0]), grid(LX[1]), grid(LX[2]), column(PROJECTS.length, 1.32, LX[3])];
+  const LAYER_HEX = ['#c8f8ff', '#6fc4ff', '#ff8a3d', null];   // JARVIS → Ultron
 
   /* ---- neurons ---- */
   const neurons = layerPos.map((arr, li) => arr.map((p, ni) => {
     const isIn = li === 0, isOut = li === 3;
-    const hex = isOut ? PROJECTS[ni].hue : isIn ? '#c8f8ff' : '#8f9dff';
+    const hex = isOut ? PROJECTS[ni].hue : LAYER_HEX[li];
     const g = new THREE.Group();
     g.position.copy(p);
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(isOut ? 0.24 : isIn ? 0.17 : 0.14, 20, 20),
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(isOut ? 0.24 : isIn ? 0.17 : 0.15, 20, 20),
       new THREE.MeshBasicMaterial({ color: hex }));
     const halo = glow(hex, isOut ? 2.4 : 1.4);
     g.add(ball, halo);
@@ -285,7 +324,7 @@ function dockAt(id) {
     return { g, ball, halo, shell, act: 0, rest: isOut ? 0.45 : 0.22, li, ni, hex };
   }));
 
-  /* ---- synapses (every neuron wired to the next layer) ---- */
+  /* ---- synapses ---- */
   const edges = [];
   for (let l = 0; l < 3; l++) {
     layerPos[l].forEach((A, a) => layerPos[l + 1].forEach((B, b) => edges.push({ l, a, b, A, B, h: rnd() })));
@@ -295,10 +334,7 @@ function dockAt(id) {
     : e.l === 2 ? e.b === k
     : ((e.h * 7.13 + k * 0.371) % 1) < 0.28;
   const projectsForSkill = (s) => PROJECTS.map((p, k) => (p.inputs.includes(s) ? k : -1)).filter((k) => k >= 0);
-  const usesSkill = (s, e) => {
-    const ks = projectsForSkill(s);
-    return e.l === 0 ? e.a === s : ks.some((k) => usesProject(k, e));
-  };
+  const usesSkill = (s, e) => (e.l === 0 ? e.a === s : projectsForSkill(s).some((k) => usesProject(k, e)));
 
   const ePos = new Float32Array(edges.length * 6), eCol = new Float32Array(edges.length * 6);
   edges.forEach((e, i) => ePos.set([e.A.x, e.A.y, e.A.z, e.B.x, e.B.y, e.B.z], i * 6));
@@ -310,20 +346,26 @@ function dockAt(id) {
   });
   net.add(new THREE.LineSegments(eGeo, eMat));
 
-  const DIM = new THREE.Color('#2f3f9a'), FAINT = new THREE.Color('#121947');
+  // resting wires fade from dim cyan (inputs) to dim orange (outputs)
+  const DIM_C = new THREE.Color('#25529c'), DIM_O = new THREE.Color('#8a3a12'), FAINT = new THREE.Color('#121947');
+  const restAt = (depth) => DIM_C.clone().lerp(DIM_O, depth / 3);
+  const tmp = new THREE.Color();
   let focus = null;      // { kind: 'p' | 's', i, color }
   function paintEdges() {
     edges.forEach((e, i) => {
-      let c = DIM;
-      if (focus) c = (focus.kind === 'p' ? usesProject(focus.i, e) : usesSkill(focus.i, e)) ? focus.color : FAINT;
-      eCol.set([c.r, c.g, c.b, c.r, c.g, c.b], i * 6);
+      let a = restAt(e.l), b = restAt(e.l + 1);
+      if (focus) {
+        const on = focus.kind === 'p' ? usesProject(focus.i, e) : usesSkill(focus.i, e);
+        a = b = on ? focus.color : FAINT;
+      }
+      eCol.set([a.r, a.g, a.b, b.r, b.g, b.b], i * 6);
     });
     eGeo.attributes.color.needsUpdate = true;
   }
   paintEdges();
 
   /* ---- signal pulses ---- */
-  const pool = Array.from({ length: 220 }, () => {
+  const pool = Array.from({ length: 240 }, () => {
     const s = glow('#ffffff', 0.55);
     s.visible = false;
     net.add(s);
@@ -335,13 +377,15 @@ function dockAt(id) {
     if (!p) return;
     p.free = false; p.e = e; p.t0 = now + delay; p.dur = 0.55 + rnd() * 0.15; p.k = strength;
     p.s.material.color.set(hex);
-    p.s.scale.setScalar(strength > 0.6 ? 0.6 : 0.38);
+    p.s.scale.setScalar(strength > 0.6 ? 0.62 : 0.38);
   }
   let passIdx = 0;
+  const PASS_HEX = [CYAN, EMBER];   // signal heats up as it moves through the layers
   function forwardPass(k) {
-    const hex = PROJECTS[k].hue;
     PROJECTS[k].inputs.forEach((s) => { neurons[0][s].act = 1; });
-    edges.forEach((e) => { if (usesProject(k, e)) fire(e, e.l * 0.62 + rnd() * 0.12, hex, 1); });
+    edges.forEach((e) => {
+      if (usesProject(k, e)) fire(e, e.l * 0.62 + rnd() * 0.12, e.l < 2 ? PASS_HEX[e.l] : PROJECTS[k].hue, 1);
+    });
   }
 
   /* ---- labels ---- */
@@ -372,8 +416,8 @@ function dockAt(id) {
   });
 
   function setFocus(kind, i) {
-    const next = kind ? { kind, i, color: new THREE.Color(kind === 'p' ? PROJECTS[i].hue : '#62e6ff') } : null;
-    if (focus && next && focus.kind === next.kind && focus.i === next.i) return;
+    const next = kind ? { kind, i, color: new THREE.Color(kind === 'p' ? PROJECTS[i].hue : CYAN) } : null;
+    if ((!focus && !next) || (focus && next && focus.kind === next.kind && focus.i === next.i)) return;
     focus = next;
     paintEdges();
     const litProjects = !focus ? [] : focus.kind === 'p' ? [focus.i] : projectsForSkill(focus.i);
@@ -394,26 +438,45 @@ function dockAt(id) {
     card.addEventListener('pointerleave', () => setFocus(null));
   });
 
-  /* ---- picking neurons in the scene ---- */
+  /* ---- picking ---- */
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
-  const pickable = [...neurons[0], ...neurons[3]].map((n) => n.ball);
+  const pickNeurons = [...neurons[0], ...neurons[3]];
+  const pickable = pickNeurons.map((n) => n.ball);
   function pick(ev) {
     const r = canvas.getBoundingClientRect();
     ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    ray.params.Mesh = { threshold: 0.2 };
     const hit = ray.intersectObjects(pickable)[0];
     if (!hit) return null;
-    const n = [...neurons[0], ...neurons[3]].find((q) => q.ball === hit.object);
+    const n = pickNeurons.find((q) => q.ball === hit.object);
     return n.li === 0 ? { kind: 's', i: n.ni } : { kind: 'p', i: n.ni };
   }
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  let hoverKey = '';
-  hero.addEventListener('pointermove', (ev) => {
-    pointer.tx = (ev.clientX / window.innerWidth) * 2 - 1;
-    pointer.ty = (ev.clientY / window.innerHeight) * 2 - 1;
-    if (ev.target.closest('.net-label')) return;
+
+  /* ---- rotation: auto-spin plus drag ---- */
+  const AUTO = 0.16;                      // rad/s, one turn every ~40 s
+  const rot = { y: -0.35, x: 0.12, vy: AUTO, tx: 0.12 };
+  const drag = { on: false, id: null, x: 0, y: 0, moved: 0, lastT: 0 };
+
+  hero.addEventListener('pointerdown', (ev) => {
+    if (ev.target.closest('a,button')) return;
+    drag.on = true; drag.id = ev.pointerId; drag.x = ev.clientX; drag.y = ev.clientY; drag.moved = 0;
+    drag.lastT = performance.now();
+    hero.classList.add('dragging');
+  });
+  window.addEventListener('pointermove', (ev) => {
+    if (drag.on && ev.pointerId === drag.id) {
+      const dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+      drag.x = ev.clientX; drag.y = ev.clientY;
+      drag.moved += Math.abs(dx) + Math.abs(dy);
+      const t = performance.now(), dt = Math.max(16, t - drag.lastT) / 1000;
+      drag.lastT = t;
+      rot.y += dx * 0.009;
+      rot.vy = (dx * 0.009) / dt;           // fling speed
+      rot.tx = Math.max(-0.55, Math.min(0.6, rot.tx + dy * 0.005));
+      return;
+    }
+    if (!hero.contains(ev.target) || ev.target.closest('.net-label')) return;
     const hit = pick(ev);
     const key = hit ? hit.kind + hit.i : '';
     if (key !== hoverKey) {
@@ -422,36 +485,38 @@ function dockAt(id) {
       hero.style.cursor = hit && hit.kind === 'p' ? 'pointer' : '';
     }
   });
-  hero.addEventListener('pointerleave', () => { hoverKey = ''; setFocus(null); });
+  const endDrag = () => { drag.on = false; hero.classList.remove('dragging'); };
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+  let hoverKey = '';
+  hero.addEventListener('pointerleave', () => { if (!drag.on) { hoverKey = ''; setFocus(null); } });
   hero.addEventListener('click', (ev) => {
-    if (ev.target.closest('a,button')) return;
+    if (ev.target.closest('a,button') || drag.moved > 6) return;
     const hit = pick(ev);
     if (hit && hit.kind === 'p') dockAt(PROJECTS[hit.i].id);
   });
 
-  /* ---- sizing ---- */
-  let W = 0, H = 0, wide = true, baseRotY = -0.3, blocks = [];
+  /* ---- sizing: fit the network into the centre band ---- */
+  let W = 0, H = 0, blocks = [], cx = 0;
   function resize() {
     W = hero.clientWidth; H = hero.clientHeight;
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
-    wide = W > 900;
-    const camZ = wide ? 17 : 22;
+    const camZ = W > 900 ? 18 : 22;
     camera.position.set(0, 0, camZ);
+    camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
-    // fit the network into the band above the title (pixels → world units at z = 0)
     const upp = (2 * Math.tan((25 * Math.PI) / 180) * camZ) / H;
-    const bandY = wide ? 265 : W > 600 ? 215 : 185;
-    const netPx = wide ? Math.min(370, H * 0.4) : W > 600 ? 300 : 250;
-    const roomW = (W - (W > 600 ? 380 : 64)) * upp;
-    const s = Math.min((netPx * upp) / 7.2, roomW / 14.8);
-    rig.position.set(0, (H / 2 - bandY) * upp, 0);
+    const hr = hero.getBoundingClientRect(), sr = space.getBoundingClientRect();
+    const bandCX = sr.left - hr.left + sr.width / 2, bandCY = sr.top - hr.top + sr.height / 2;
+    cx = bandCX;
+    const roomW = (W - (W > 600 ? 360 : 40)) * upp;
+    const s = Math.min((sr.height * upp) / 10, roomW / 14.8);
+    rig.position.set((bandCX - W / 2) * upp, (H / 2 - bandCY) * upp, 0);
     rig.scale.setScalar(s);
-    baseRotY = wide ? -0.3 : -0.2;
-    const hr = hero.getBoundingClientRect();
-    blocks = [...document.querySelectorAll('.callsign, .wordmark, .lede, .hero-actions, .hint')].map((el) => {
+    blocks = [...document.querySelectorAll('.hero-top > *, .hero-bottom > *')].map((el) => {
       const r = el.getBoundingClientRect();
-      return { l: r.left - hr.left - 16, r: r.right - hr.left + 16, t: r.top - hr.top - 14, b: r.bottom - hr.top + 10 };
+      return { l: r.left - hr.left - 12, r: r.right - hr.left + 12, t: r.top - hr.top - 10, b: r.bottom - hr.top + 8 };
     });
   }
   window.addEventListener('resize', resize);
@@ -461,20 +526,24 @@ function dockAt(id) {
   let visible = true;
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) loop(); }).observe(hero);
 
-  const v = new THREE.Vector3();
+  const v = new THREE.Vector3(), wp = new THREE.Vector3();
   let intro = 0, nextPass = 1.2, nextAmbient = 0;
 
-  function placeLabel(el, n, side) {
-    n.g.getWorldPosition(v);
-    v.project(camera);
+  function placeLabel(el, n) {
+    n.g.getWorldPosition(wp);
+    v.copy(wp).project(camera);
     const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
-    // where the label's body would sit
-    const lx = side === 'in' ? x - 150 : x + 16, rx = side === 'in' ? x - 14 : x + 190;
+    const left = x < cx;                               // label goes on the outside of the network
+    const lx = left ? x - 160 : x + 16, rx = left ? x - 14 : x + 200;
     const covered = blocks.some((b) => rx > b.l && lx < b.r && y > b.t && y < b.b);
+    // fade labels on neurons turned away from the viewer
+    const depth = (wp.z - rig.position.z) / rig.scale.x;   // + is toward the viewer
+    const facing = Math.max(0, Math.min(1, 0.5 + depth / 9));
     const hide = v.z > 1 || covered || W <= 600;
-    el.style.opacity = hide ? '0' : String(Math.min(1, intro * 1.5));
-    el.style.pointerEvents = hide ? 'none' : 'auto';
-    el.style.transform = side === 'in'
+    el.style.opacity = hide ? '0' : String((Math.min(1, intro * 1.5) * (0.25 + 0.75 * facing)).toFixed(2));
+    el.style.pointerEvents = hide || facing < 0.3 ? 'none' : 'auto';
+    el.style.zIndex = String(Math.round(facing * 10));
+    el.style.transform = left
       ? `translate(${(x - 16).toFixed(1)}px, ${(y - 11).toFixed(1)}px) translateX(-100%)`
       : `translate(${(x + 18).toFixed(1)}px, ${(y - 11).toFixed(1)}px)`;
   }
@@ -484,25 +553,31 @@ function dockAt(id) {
     intro = Math.min(1, intro + dt * 0.5);
     const ease = 1 - Math.pow(1 - intro, 3);
 
-    pointer.x += (pointer.tx - pointer.x) * 0.05;
-    pointer.y += (pointer.ty - pointer.y) * 0.05;
-    net.rotation.y = baseRotY + pointer.x * 0.22 + Math.sin(now * 0.18) * 0.07;
-    net.rotation.x = 0.1 + pointer.y * 0.1;
+    if (!drag.on) {
+      rot.vy += (AUTO - rot.vy) * Math.min(1, dt * 1.2);   // fling settles back to the auto-spin
+      rot.y += rot.vy * dt;
+      rot.tx += (0.12 - rot.tx) * dt * 0.4;                 // tilt eases back
+    }
+    rot.x += (rot.tx - rot.x) * 0.12;
+    net.rotation.set(rot.x, rot.y, 0);
     net.scale.setScalar(0.7 + 0.3 * ease);
-    camera.position.x = pointer.x * 0.6;
-    camera.lookAt(0, 0, 0);
+
+    base.rotation.x = rot.x * 0.5;
+    ringA.rotation.y = now * 0.25;
+    ringB.rotation.y = -now * 0.4;
+    ringC.rotation.y = now * 0.08;
+    tickRing.rotation.y = -now * 0.12;
+    lensHot.material.opacity = 0.35 + Math.sin(now * 2.4) * 0.15;
     dust.rotation.y = now * 0.01;
     eMat.opacity = 0.95 * ease;
 
-    // a forward pass every few seconds, cycling through the projects
     if (now > nextPass && !focus) {
       forwardPass(passIdx % PROJECTS.length);
       passIdx++;
       nextPass = now + 2.8;
     }
-    // ambient chatter on random synapses
     if (now > nextAmbient) {
-      fire(edges[(rnd() * edges.length) | 0], 0, '#7fa2ff', 0.4);
+      fire(edges[(rnd() * edges.length) | 0], 0, rnd() < 0.55 ? '#7fd8ff' : '#ff9a4d', 0.4);
       nextAmbient = now + 0.07;
     }
 
@@ -531,8 +606,8 @@ function dockAt(id) {
     outLabels.forEach((el, k) => el.classList.toggle('fire', neurons[3][k].act > 0.35));
     inLabels.forEach((el, s) => el.classList.toggle('fire', neurons[0][s].act > 0.35));
 
-    neurons[0].forEach((n, i) => placeLabel(inLabels[i], n, 'in'));
-    neurons[3].forEach((n, k) => placeLabel(outLabels[k], n, 'out'));
+    neurons[0].forEach((n, i) => placeLabel(inLabels[i], n));
+    neurons[3].forEach((n, k) => placeLabel(outLabels[k], n));
 
     renderer.render(scene, camera);
   }
@@ -556,7 +631,9 @@ function dockAt(id) {
     intro = 1;
     const still = () => { now = 4; frame(0); };
     still();
-    window.addEventListener('resize', still);
+    window.addEventListener('resize', () => { resize(); still(); });
+    // drag still turns it, one frame at a time
+    window.addEventListener('pointermove', () => { if (drag.on) frame(0); });
   } else {
     loop();
   }
