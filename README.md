@@ -1,11 +1,11 @@
-# Singularity
+# Synapse
 
 **Every project I've built, in one place.**
 Live site: **https://ysingh2103.github.io/starforge/**
 
-Singularity is my project index, built around the next era of tech where infrastructure is automated and AI runs the first line of support. It opens on a live 3D neural core: each project is a node wired to the core, with data packets moving along the links. Click a node (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
+Synapse is my project network. The page opens on a live 3D neural network: my skills form the input layer, two hidden layers sit in the middle, and each project is an output neuron. Signals fire forward through the network, and hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
 
-## Deployed systems
+## Output layer
 
 | Project | What it is | Code | Hosted at |
 |---|---|---|---|
@@ -22,12 +22,12 @@ Plain HTML, CSS and JavaScript with [three.js](https://threejs.org/) r128 from a
 ```
 index.html   page structure
 style.css    all styling
-app.js       project data, card rendering, 3D neural core
+app.js       skills, project data, card rendering, 3D neural network
 ```
 
 ### Add a new project
 
-Open `app.js` and add one object to the `PROJECTS` array (name, status, hue, description, stack, repo, live URL). The card and its node appear automatically.
+Open `app.js` and add one object to the `PROJECTS` array (name, status, hue, description, stack, repo, live URL, and `inputs`: the skills from `SKILLS` that feed it). The card and its output neuron appear automatically.
 
 ### Run locally
 

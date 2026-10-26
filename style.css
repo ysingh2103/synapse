@@ -48,7 +48,6 @@ a { color: inherit; }
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  min-height: min(760px, 92svh);
   display: grid;
   align-items: end;
   overflow: hidden;
@@ -79,7 +78,7 @@ a { color: inherit; }
   width: 100%;
   max-width: 1080px;
   margin: 0 auto;
-  padding: 120px var(--gutter-r) 72px var(--gutter-l);
+  padding: 500px var(--gutter-r) 72px var(--gutter-l);   /* top band holds the network */
   position: relative;
   z-index: 2;
   pointer-events: none;     /* let clicks reach the 3D satellites */
@@ -116,9 +115,9 @@ a { color: inherit; }
   margin: 0;
   font-family: var(--f-disp);
   font-weight: 800;
-  font-size: clamp(34px, 8.2vw, 116px);
+  font-size: clamp(48px, 11vw, 128px);
+  letter-spacing: .02em;
   line-height: .9;
-  letter-spacing: -.02em;
   display: flex;
   flex-wrap: wrap;
   perspective: 600px;
@@ -213,32 +212,34 @@ main { padding-block: 40px 96px; }
   35% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--hue) 80%, transparent); }
 }
 
-/* node badge: a lit neural node with a scanning ring, in the project's hue */
+/* neuron badge: a firing neuron with an activation ripple, in the project's hue */
 .badge {
   position: relative;
   width: 112px; height: 112px;
   display: grid; place-items: center;
 }
 .badge .planet {
-  width: 40px; height: 40px; border-radius: 8px;
-  transform: rotate(45deg);
+  width: 40px; height: 40px; border-radius: 50%;
   border: 2px solid var(--hue);
-  background: radial-gradient(circle, #fff 0 14%, color-mix(in srgb, var(--hue) 35%, transparent) 15%, transparent 70%);
+  background: radial-gradient(circle, #fff 0 16%, color-mix(in srgb, var(--hue) 45%, transparent) 18%, transparent 72%);
   box-shadow: 0 0 30px color-mix(in srgb, var(--hue) 55%, transparent), inset 0 0 14px color-mix(in srgb, var(--hue) 50%, transparent);
 }
 .badge .ring {
   position: absolute; inset: 14px;
-  border: 1px dashed color-mix(in srgb, var(--hue) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hue) 60%, transparent);
   border-radius: 50%;
-  animation: spin 16s linear infinite;
+  animation: ripple 2.6s ease-out infinite;
 }
-.badge .ring::after {
-  content: ""; position: absolute; top: -4px; left: 50%;
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--hue);
-  box-shadow: 0 0 10px var(--hue);
+@keyframes ripple {
+  0%   { transform: scale(.55); opacity: .9; }
+  100% { transform: scale(1.15); opacity: 0; }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+.badge::before, .badge::after {       /* dendrites */
+  content: ""; position: absolute; top: 50%; height: 1px; width: 26%;
+  background: linear-gradient(90deg, transparent, var(--hue));
+}
+.badge::before { left: 0; }
+.badge::after  { right: 0; transform: scaleX(-1); }
 
 .body { min-width: 0; display: grid; gap: 12px; align-content: start; }
 .status {
@@ -320,6 +321,41 @@ main { padding-block: 40px 96px; }
 .panel .actions a.primary:hover { filter: brightness(1.12); }
 .panel .actions a:not(.primary):hover { border-color: var(--hue); color: var(--ice); }
 
+/* skills feeding each project */
+.panel dd.inputs { display: flex; flex-wrap: wrap; gap: 6px; }
+.panel dd.inputs span {
+  font: 500 12px/1 var(--f-mono);
+  padding: 5px 8px;
+  border-radius: 99px;
+  color: var(--ice);
+  border: 1px solid color-mix(in srgb, var(--hue) 55%, transparent);
+  background: color-mix(in srgb, var(--hue) 10%, transparent);
+}
+
+/* ---------- Network labels (positioned by app.js) ---------- */
+.net-labels { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.net-label {
+  position: absolute; left: 0; top: 0;
+  font: 500 12px/1 var(--f-mono);
+  white-space: nowrap;
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: var(--dim);
+  background: rgba(7, 10, 28, .6);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(4px);
+  text-decoration: none;
+  transition: opacity .3s, color .2s, border-color .2s, box-shadow .2s;
+  will-change: transform;
+  cursor: default;
+}
+.net-label.out { --hue: var(--flare); color: var(--ice); border-color: color-mix(in srgb, var(--hue) 45%, transparent); cursor: pointer; }
+.net-label.in.fire, .net-label.in.on { color: var(--ice); border-color: var(--flare); }
+.net-label.out.fire, .net-label.out.on {
+  border-color: var(--hue);
+  box-shadow: 0 0 18px -2px color-mix(in srgb, var(--hue) 70%, transparent);
+}
+
 /* ---------- Footer ---------- */
 .foot { border-top: 1px solid var(--line); background: #060819; }
 .foot-inner {
@@ -345,6 +381,9 @@ main { padding-block: 40px 96px; }
 .copy.done { color: var(--live); border-color: var(--live); }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .hero-inner { padding-top: 420px; }
+}
 @media (max-width: 920px) {
   .dossier { grid-template-columns: 84px minmax(0, 1fr); }
   .badge { width: 84px; height: 84px; }
@@ -357,7 +396,7 @@ main { padding-block: 40px 96px; }
   .badge { width: 64px; height: 64px; }
   .badge .planet { width: 24px; height: 24px; }
   .badge .ring { inset: 6px; }
-  .hero-inner { padding-top: 96px; padding-bottom: 48px; }
+  .hero-inner { padding-top: 360px; padding-bottom: 48px; }
   .hint { display: none; }
 }
 
