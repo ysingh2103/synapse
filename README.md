@@ -3,7 +3,7 @@
 **Every project I've built, in one place.**
 Live site: **https://ysingh2103.github.io/starforge/**
 
-Synapse is my project network. The page opens on a live 3D neural network: my skills form the input layer, three hidden layers sit in the middle, and each project is an output neuron in its own gemstone colour. Gold signals travel through the network, it turns slowly on its own (drag to turn it), and every few seconds a gold surge rises from the projector base beneath it. Hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
+Synapse is my project network, set in a universe of twinkling stars, nebulae and drifting streams of binary. A live 3D neural network in Claude coral and ivory sits at the centre: my skills form the input layer, three hidden layers sit in the middle, and each project is an output neuron. Signals travel through it, it turns slowly on its own (drag to turn it), and every few seconds a surge rises from the projector base beneath it. Hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
 
 ## Output layer
 
@@ -28,6 +28,10 @@ app.js       skills, project data, card rendering, 3D neural network
 ### Add a new project
 
 Open `app.js` and add one object to the `PROJECTS` array (name, status, hue, description, stack, repo, live URL, and `inputs`: the skills from `SKILLS` that feed it). The card and its output neuron appear automatically.
+
+### Publishing an update
+
+After changing `style.css` or `app.js`, bump the `?v=` number on both links in `index.html` so browsers fetch the new files instead of a cached copy.
 
 ### Run locally
 

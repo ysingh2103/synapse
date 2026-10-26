@@ -1,5 +1,5 @@
 /* Synapse — project data, card rendering and the 3D neural network.
-   To add a project: append an object to PROJECTS. The card, its gem and its output neuron
+   To add a project: append an object to PROJECTS. The card, its star and its output neuron
    are generated automatically. `inputs` lists the SKILLS (by index) that feed it. */
 
 const SKILLS = [
@@ -17,7 +17,7 @@ const PROJECTS = [
     id: 'retail-network',
     name: 'Retail Network Lab',
     status: 'live', statusText: 'Live demo',
-    hue: '#3ee6a8',   // emerald
+    hue: '#d97757',   // Claude coral
     tagline: 'An interactive 3D model of a retail company network: one head office and a 23-store chain.',
     about: 'Every device is wired the way a real retail environment would be. Click any device to inspect it, watch traffic move hop by hop, and work through realistic outages from first symptom to root cause.',
     highlights: [
@@ -35,7 +35,7 @@ const PROJECTS = [
     id: 'fault-trace',
     name: 'Store Fault Trace',
     status: 'live', statusText: 'Live prototype',
-    hue: '#6cb6ff',   // sapphire
+    hue: '#f0a47a',   // peach
     tagline: 'A live troubleshooting view for one store that traces any failure back to its root cause.',
     about: 'Break something on purpose, such as a frozen camera, a cut cable, a power cut, a worn UPS battery or an ISP outage. It follows the failure through the power and network chain, groups related alerts into one incident and says who to send.',
     highlights: [
@@ -53,7 +53,7 @@ const PROJECTS = [
     id: 'infra-lab',
     name: 'Self-Hosted Infrastructure Lab',
     status: 'live', statusText: 'Complete · 11 write-ups',
-    hue: '#ffbe55',   // topaz
+    hue: '#f2d3a8',   // sand
     tagline: 'A home lab built from scratch on VMware ESXi, with every failure diagnosed and documented like a real support ticket.',
     about: 'Linux administration, web and application servers, databases, containers, Kubernetes and monitoring. Each incident follows symptom, hypothesis, diagnostic steps, root cause, fix and verification.',
     highlights: [
@@ -71,7 +71,7 @@ const PROJECTS = [
     id: 'docvault',
     name: 'DocVault',
     status: 'build', statusText: 'In build · Phase 1 done',
-    hue: '#bb94ff',   // amethyst
+    hue: '#e86f6a',   // rose
     tagline: 'A small document-management web app on the stack enterprise support teams run.',
     about: 'Upload, list, filter and download documents. Files live on disk and metadata in PostgreSQL, served by a Java servlet app on Tomcat 10 behind an NGINX reverse proxy.',
     highlights: [
@@ -89,7 +89,7 @@ const PROJECTS = [
     id: 'ultron',
     name: 'Ultron',
     status: 'early', statusText: 'Early build',
-    hue: '#ff5a7a',   // ruby
+    hue: '#f0eee6',   // ivory
     tagline: 'A self-hosted incident trainer that injects real faults and times how long they take to fix.',
     about: 'Faults across Windows Server, Linux, IIS, Tomcat, SQL Server, Oracle, DB2, Active Directory and Kubernetes. The first pieces are running: a Flask health API and dashboard, and a heartbeat service that watches the lab server.',
     highlights: [
@@ -218,7 +218,8 @@ function dockAt(id) {
   } catch (e) { return; }   // no WebGL: the gradient background stays
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
-  const GOLD = '#e8c26e', GOLD_HI = '#fff0c4', PEARL = '#fff8ea', SAPPHIRE = '#7fb0ff';
+  // Claude palette: coral, peach, ivory (names kept short: GOLD = coral, GOLD_HI = hot peach)
+  const GOLD = '#d97757', GOLD_HI = '#ffd9c2', PEARL = '#f0eee6', SAPPHIRE = '#f0a47a';
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 400);
@@ -228,27 +229,6 @@ function dockAt(id) {
   net.position.y = 0.6;
   rig.add(net);
   scene.add(rig);
-
-  /* gold dust, drifting slowly upward */
-  const DUST = 900;
-  const dustPos = new Float32Array(DUST * 3);
-  {
-    const col = new Float32Array(DUST * 3);
-    const tint = [new THREE.Color('#ffffff'), new THREE.Color(GOLD_HI), new THREE.Color(GOLD), new THREE.Color('#aecbff')];
-    for (let i = 0; i < DUST; i++) {
-      dustPos.set([(Math.random() - 0.5) * 70, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40 - 6], i * 3);
-      const c = tint[(Math.random() * tint.length) | 0];
-      col.set([c.r, c.g, c.b], i * 3);
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    var dust = new THREE.Points(g, new THREE.PointsMaterial({
-      size: 0.09, vertexColors: true, transparent: true, opacity: 0.75, depthWrite: false,
-      blending: THREE.AdditiveBlending
-    }));
-    scene.add(dust);
-  }
 
   /* soft glow sprite */
   const glowTex = (() => {
@@ -269,7 +249,7 @@ function dockAt(id) {
     return s;
   };
 
-  /* ---- gold projector base ---- */
+  /* ---- projector base ---- */
   const base = new THREE.Group();
   base.position.y = -4.1;
   base.scale.setScalar(0.62);
@@ -285,7 +265,7 @@ function dockAt(id) {
   const lineMat = (hex, op) => new THREE.LineBasicMaterial({
     color: hex, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false
   });
-  const ringA = new THREE.Line(circle(4.2), lineMat(GOLD_HI, 0.7));
+  const ringA = new THREE.Line(circle(4.2), lineMat(PEARL, 0.55));
   const ringB = new THREE.Group();
   [[0, 1.7], [2.2, 3.9], [4.5, 5.8]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 90, a, b), lineMat(GOLD, 0.85))));
   const ringC = new THREE.Line(circle(7.4), new THREE.LineDashedMaterial({
@@ -298,7 +278,7 @@ function dockAt(id) {
     ticks.push(new THREE.Vector3(Math.cos(a) * r1, 0, Math.sin(a) * r1), new THREE.Vector3(Math.cos(a) * r2, 0, Math.sin(a) * r2));
   }
   const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(GOLD, 0.45));
-  const lens = glow(GOLD, 7); lens.material.opacity = 0.4;
+  const lens = glow(GOLD, 7); lens.material.opacity = 0.45;
   const lensHot = glow(GOLD_HI, 2.6); lensHot.material.opacity = 0.7;
   // surge wave: a ring that expands out of the base
   const wave = new THREE.Line(circle(1), lineMat(GOLD_HI, 0));
@@ -322,7 +302,7 @@ function dockAt(id) {
     grid(LX[1]), grid(LX[2], 4), grid(LX[3]),
     column(PROJECTS.length, 1.38, LX[4])
   ];
-  const LAYER_HEX = [PEARL, GOLD, SAPPHIRE, GOLD_HI, null];
+  const LAYER_HEX = [PEARL, GOLD, SAPPHIRE, '#c15f41', null];
 
   /* ---- neurons ---- */
   const neurons = layerPos.map((arr, li) => arr.map((p, ni) => {
@@ -366,8 +346,8 @@ function dockAt(id) {
   });
   net.add(new THREE.LineSegments(eGeo, eMat));
 
-  // resting wires: gold near the inputs and outputs, sapphire through the middle
-  const W_GOLD = new THREE.Color('#6e5527'), W_SAPH = new THREE.Color('#2b4da8'), FAINT = new THREE.Color('#141c4a');
+  // resting wires: warm ivory near the ends, coral through the middle
+  const W_GOLD = new THREE.Color('#6a5a4c'), W_SAPH = new THREE.Color('#8a3d26'), FAINT = new THREE.Color('#1a1412');
   const restAt = (depth) => {
     const t = Math.abs(depth / LAST - 0.5) * 2;   // 1 at the ends, 0 in the middle
     return W_SAPH.clone().lerp(W_GOLD, t);
@@ -589,14 +569,6 @@ function dockAt(id) {
     tickRing.rotation.y = -now * 0.06;
     lensHot.material.opacity = 0.55 + Math.sin(now * 1.2) * 0.15;
 
-    // dust drifts up and wraps
-    const dp = dust.geometry.attributes.position;
-    for (let i = 0; i < DUST; i++) {
-      let y = dp.getY(i) + dt * (0.12 + (i % 7) * 0.02);
-      if (y > 20) y = -20;
-      dp.setY(i, y);
-    }
-    dp.needsUpdate = true;
     eMat.opacity = ease;
 
     // surge: a gold wave leaves the base and a flare climbs through the layers
@@ -679,4 +651,151 @@ function dockAt(id) {
   } else {
     loop();
   }
+})();
+
+/* ---------- The universe behind the whole site ----------
+   Three depths of twinkling stars, a dusty milky-way band, falling streams of
+   binary, and the occasional shooting star. Drawn on a fixed 2D canvas; the
+   star layers drift at different speeds as the page scrolls. */
+(function universe() {
+  const cv = document.getElementById('universe');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1;
+  let stars = [], streams = [], shoot = null, nextShoot = 4;
+
+  const STAR_TINTS = ['255,255,255', '240,238,230', '255,214,190', '196,210,255', '240,164,122'];
+  function build() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const area = W * H;
+    const count = Math.min(900, Math.round(area / 1500));
+    stars = Array.from({ length: count }, () => {
+      const depth = Math.random();                         // 0 far … 1 near
+      // a third of the stars crowd into a diagonal milky-way band
+      let x = Math.random() * W, y = Math.random() * H * 1.6;
+      if (Math.random() < 0.35) {
+        const t = Math.random();
+        x = t * W;
+        y = (0.15 + t * 0.55) * H * 1.6 + (Math.random() - 0.5) * H * 0.22;
+      }
+      return {
+        x, y, depth,
+        r: 0.3 + depth * depth * 1.5,
+        tint: STAR_TINTS[(Math.random() * STAR_TINTS.length) | 0],
+        base: 0.35 + Math.random() * 0.55,
+        tw: 0.4 + Math.random() * 1.6,
+        ph: Math.random() * Math.PI * 2
+      };
+    });
+    const cols = Math.max(8, Math.round(W / 70));
+    streams = Array.from({ length: cols }, () => newStream(true));
+  }
+  function newStream(anywhere) {
+    const len = 6 + ((Math.random() * 16) | 0);
+    return {
+      x: Math.round(Math.random() * W / 18) * 18,
+      y: anywhere ? Math.random() * H : -len * 18,
+      speed: 14 + Math.random() * 26,                      // px per second: slow drift
+      digits: Array.from({ length: len }, () => (Math.random() < 0.5 ? '0' : '1')),
+      flip: 0,
+      alpha: 0.12 + Math.random() * 0.18,
+      size: Math.random() < 0.25 ? 15 : 12
+    };
+  }
+
+  function draw(t, dt) {
+    ctx.clearRect(0, 0, W, H);
+    const sy = window.scrollY || 0;
+
+    // milky-way glow
+    const g = ctx.createLinearGradient(0, H * 0.1, W, H * 0.9);
+    g.addColorStop(0, 'rgba(120,90,170,0)');
+    g.addColorStop(0.5, 'rgba(150,120,200,0.05)');
+    g.addColorStop(1, 'rgba(120,90,170,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // stars
+    for (const s of stars) {
+      const y = ((s.y - sy * (0.04 + s.depth * 0.16)) % (H * 1.6) + H * 1.6) % (H * 1.6) - H * 0.3;
+      if (y < -4 || y > H + 4) continue;
+      const a = s.base * (0.65 + 0.35 * Math.sin(t * s.tw + s.ph));
+      ctx.fillStyle = `rgba(${s.tint},${a.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      if (s.r > 1.3) {                                    // the brightest get a soft halo
+        ctx.fillStyle = `rgba(${s.tint},${(a * 0.12).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, y, s.r * 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // binary streams
+    for (let i = 0; i < streams.length; i++) {
+      const st = streams[i];
+      st.y += st.speed * dt;
+      st.flip += dt;
+      if (st.flip > 0.6) {                                 // bits change as they fall
+        st.flip = 0;
+        st.digits[(Math.random() * st.digits.length) | 0] = Math.random() < 0.5 ? '0' : '1';
+      }
+      ctx.font = `500 ${st.size}px "JetBrains Mono", ui-monospace, monospace`;
+      const step = st.size + 6;
+      for (let k = 0; k < st.digits.length; k++) {
+        const y = st.y - k * step;
+        if (y < -step || y > H + step) continue;
+        const head = k === 0;
+        const fade = 1 - k / st.digits.length;
+        ctx.fillStyle = head
+          ? `rgba(240,164,122,${(st.alpha * 2.2).toFixed(3)})`
+          : `rgba(240,238,230,${(st.alpha * fade).toFixed(3)})`;
+        ctx.fillText(st.digits[k], st.x, y);
+      }
+      if (st.y - st.digits.length * step > H) streams[i] = newStream(false);
+    }
+
+    // shooting star
+    nextShoot -= dt;
+    if (!shoot && nextShoot <= 0) {
+      shoot = { x: Math.random() * W * 0.7, y: Math.random() * H * 0.4, vx: 520 + Math.random() * 260, vy: 200 + Math.random() * 120, life: 0 };
+      nextShoot = 7 + Math.random() * 9;
+    }
+    if (shoot) {
+      shoot.life += dt;
+      shoot.x += shoot.vx * dt; shoot.y += shoot.vy * dt;
+      const a = Math.max(0, 1 - shoot.life / 1.1);
+      const tail = ctx.createLinearGradient(shoot.x, shoot.y, shoot.x - shoot.vx * 0.22, shoot.y - shoot.vy * 0.22);
+      tail.addColorStop(0, `rgba(255,240,225,${a})`);
+      tail.addColorStop(1, 'rgba(240,164,122,0)');
+      ctx.strokeStyle = tail;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(shoot.x, shoot.y);
+      ctx.lineTo(shoot.x - shoot.vx * 0.22, shoot.y - shoot.vy * 0.22);
+      ctx.stroke();
+      if (a <= 0) shoot = null;
+    }
+  }
+
+  build();
+  window.addEventListener('resize', build);
+  if (reduceMotion) {
+    draw(2, 0);
+    window.addEventListener('resize', () => draw(2, 0));
+    window.addEventListener('scroll', () => draw(2, 0), { passive: true });
+    return;
+  }
+  let last = performance.now();
+  const tick = (ts) => {
+    const dt = Math.min((ts - last) / 1000, 0.05);
+    last = ts;
+    if (!document.hidden) draw(ts / 1000, dt);
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 })();
