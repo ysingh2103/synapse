@@ -48,7 +48,7 @@ Repo **Settings → Pages → Deploy from a branch → `main` / root**. The site
 
 ## Author
 
-**Yuvraj Singh** · IT Network Support Specialist & QA Analyst, Toronto
+**Yuvraj Singh**
 [LinkedIn](https://linkedin.com/in/y-singh-gill) · [GitHub](https://github.com/ysingh2103)
 
 ## License
