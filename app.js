@@ -1,6 +1,6 @@
-/* Starforge — project data, card rendering and the 3D orrery.
-   To add a project: append an object to PROJECTS. The card and its orbiting
-   satellite are generated automatically. */
+/* Singularity — project data, card rendering and the 3D neural core.
+   To add a project: append an object to PROJECTS. The card and its neural node
+   are generated automatically. */
 
 const PROJECTS = [
   {
@@ -128,7 +128,7 @@ manifest.innerHTML = PROJECTS.map((p) => `
   </li>`).join('');
 
 document.querySelector('.callsign').lastChild.textContent =
-  `Station online · ${PROJECTS.length} projects in orbit`;
+  `Core online · ${PROJECTS.length} systems deployed`;
 
 /* ---------- Card tilt on pointer (desktop only) ---------- */
 if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
@@ -171,7 +171,7 @@ function dockAt(id) {
   el.classList.remove('is-target'); void el.offsetWidth; el.classList.add('is-target');
 }
 
-/* ---------- 3D orrery ---------- */
+/* ---------- 3D neural core ---------- */
 (function orrery() {
   const canvas = document.getElementById('orrery');
   if (!window.THREE || !canvas) return;
@@ -193,7 +193,7 @@ function dockAt(id) {
   /* starfield */
   const starGeo = new THREE.BufferGeometry();
   const N = 2600, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
-  const tint = [new THREE.Color('#ffffff'), new THREE.Color('#c9d4ff'), new THREE.Color('#ffd79a')];
+  const tint = [new THREE.Color('#ffffff'), new THREE.Color('#c9d4ff'), new THREE.Color('#9ff0ff')];
   for (let i = 0; i < N; i++) {
     const r = 40 + Math.random() * 140;
     const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
@@ -228,23 +228,49 @@ function dockAt(id) {
     return s;
   };
 
-  /* the forge: a burning core inside two counter-rotating wireframe shells */
+  /* the core: an intelligence at the centre, two counter-rotating lattices
+     with lit synapses on every vertex */
   const core = new THREE.Group();
   system.add(core);
-  core.add(new THREE.Mesh(new THREE.SphereGeometry(1.05, 32, 32),
-    new THREE.MeshBasicMaterial({ color: '#ffcf86' })));
-  core.add(glow('#ffb547', 9));
-  const shellA = new THREE.Mesh(new THREE.IcosahedronGeometry(1.9, 1),
-    new THREE.MeshBasicMaterial({ color: '#ffb547', wireframe: true, transparent: true, opacity: 0.35 }));
-  const shellB = new THREE.Mesh(new THREE.OctahedronGeometry(2.6, 0),
-    new THREE.MeshBasicMaterial({ color: '#8aa4ff', wireframe: true, transparent: true, opacity: 0.25 }));
+  core.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.95, 2),
+    new THREE.MeshBasicMaterial({ color: '#d9fbff' })));
+  core.add(glow('#62e6ff', 9));
+  core.add(glow('#9b7bff', 14));
+  const latticeGeo = new THREE.IcosahedronGeometry(1.9, 1);
+  const shellA = new THREE.Mesh(latticeGeo,
+    new THREE.MeshBasicMaterial({ color: '#62e6ff', wireframe: true, transparent: true, opacity: 0.38 }));
+  shellA.add(new THREE.Points(latticeGeo, new THREE.PointsMaterial({
+    color: '#e6fdff', size: 0.16, transparent: true, opacity: 0.95, depthWrite: false
+  })));
+  const shellB = new THREE.Mesh(new THREE.DodecahedronGeometry(2.7, 0),
+    new THREE.MeshBasicMaterial({ color: '#9b7bff', wireframe: true, transparent: true, opacity: 0.28 }));
   core.add(shellA, shellB);
 
-  /* satellites, one per project */
+  /* neural mesh: a faint web of connected neurons around the core */
+  const mesh = new THREE.Group();
+  system.add(mesh);
+  {
+    const M = 150, pts = [];
+    for (let i = 0; i < M; i++) {
+      const r = 9 + Math.random() * 6;
+      const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+      pts.push(new THREE.Vector3(r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph) * 0.55, r * Math.sin(ph) * Math.sin(th)));
+    }
+    const seg = [];
+    for (let i = 0; i < M; i++) for (let j = i + 1; j < M; j++) {
+      if (pts[i].distanceTo(pts[j]) < 3.1) seg.push(pts[i], pts[j]);
+    }
+    mesh.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(seg),
+      new THREE.LineBasicMaterial({ color: '#5a7cff', transparent: true, opacity: 0.16, depthWrite: false })));
+    mesh.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.PointsMaterial({ color: '#9fdcff', size: 0.12, transparent: true, opacity: 0.7, depthWrite: false })));
+  }
+
+  /* nodes, one per project, each wired to the core */
   const sats = [];
   const labelLayer = document.createElement('div');
   labelLayer.className = 'orbit-labels';
-  labelLayer.setAttribute('aria-label', 'Projects in orbit');
+  labelLayer.setAttribute('aria-label', 'Deployed systems');
   Object.assign(labelLayer.style, { position: 'absolute', inset: '0', zIndex: '1', pointerEvents: 'none' });
   hero.appendChild(labelLayer);
 
@@ -255,28 +281,33 @@ function dockAt(id) {
     tilt.rotation.z = (i - 2) * 0.16;
     system.add(tilt);
 
-    // dotted orbit path
+    // faint orbit path
     const pts = [];
     for (let k = 0; k <= 128; k++) {
       const a = (k / 128) * Math.PI * 2;
       pts.push(new THREE.Vector3(Math.cos(a) * radius, Math.sin(a) * radius, 0));
     }
     const path = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineDashedMaterial({ color: p.hue, dashSize: 0.18, gapSize: 0.22, transparent: true, opacity: 0.35 }));
+      new THREE.LineDashedMaterial({ color: p.hue, dashSize: 0.12, gapSize: 0.3, transparent: true, opacity: 0.18 }));
     path.computeLineDistances();
     tilt.add(path);
 
     const body = new THREE.Group();
-    const planet = new THREE.Mesh(new THREE.SphereGeometry(0.32 + (i === 0 ? 0.1 : 0), 24, 24),
-      new THREE.MeshBasicMaterial({ color: p.hue }));
-    const halo = glow(p.hue, 2.2);
-    body.add(planet, halo);
-    if (i === 0 || i === 3) {   // a ring on two of them for variety
-      const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.62, 48),
-        new THREE.MeshBasicMaterial({ color: p.hue, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
-      ring.rotation.x = 1.2;
-      body.add(ring);
-    }
+    const planet = new THREE.Mesh(new THREE.OctahedronGeometry(0.46, 0),
+      new THREE.MeshBasicMaterial({ color: p.hue, wireframe: true }));
+    const kernel = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16),
+      new THREE.MeshBasicMaterial({ color: '#ffffff' }));
+    const halo = glow(p.hue, 2.4);
+    body.add(planet, kernel, halo);
+
+    // data link from the core to this node, with a packet travelling along it
+    const beamGeo = new THREE.BufferGeometry();
+    beamGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    const beam = new THREE.Line(beamGeo,
+      new THREE.LineBasicMaterial({ color: p.hue, transparent: true, opacity: 0.3, depthWrite: false }));
+    tilt.add(beam);
+    const packet = glow(p.hue, 0.9);
+    tilt.add(packet);
     tilt.add(body);
 
     const label = document.createElement('a');
@@ -299,6 +330,7 @@ function dockAt(id) {
 
     sats.push({
       p, body, planet, halo, label, radius,
+      beam, packet, phase: Math.random(),
       speed: 0.16 / Math.sqrt(radius / 3.8),
       angle: i * 1.3 + 0.4,
       lit: false
@@ -346,9 +378,12 @@ function dockAt(id) {
 
   /* sizing */
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  let W = 0, H = 0, wide = true;
+  let W = 0, H = 0, wide = true, block = null;
+  const wordmark = document.querySelector('.wordmark');
   function resize() {
     W = hero.clientWidth; H = hero.clientHeight;
+    const hr = hero.getBoundingClientRect(), wr = wordmark.getBoundingClientRect();
+    block = { l: wr.left - hr.left - 12, r: wr.right - hr.left, t: wr.top - hr.top - 24, b: wr.bottom - hr.top };
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     wide = W > 900;
@@ -380,6 +415,7 @@ function dockAt(id) {
     camera.lookAt(system.position.x * 0.55, system.position.y * 0.5, 0);
 
     stars.rotation.y = t * 0.008;
+    mesh.rotation.y = t * 0.02;
     shellA.rotation.set(t * 0.25, t * 0.32, 0);
     shellB.rotation.set(-t * 0.18, -t * 0.12, t * 0.1);
     core.scale.setScalar((0.35 + 0.65 * ease) * (1 + Math.sin(t * 2.2) * 0.025));
@@ -391,12 +427,22 @@ function dockAt(id) {
       const target = s.lit ? 1.6 : 1;
       s.body.scale.setScalar(s.body.scale.x + (target - s.body.scale.x) * 0.15);
       s.halo.material.opacity = s.lit ? 1 : 0.75;
+      s.planet.rotation.set(t * 0.8, t * 1.1, 0);
+
+      const bp = s.beam.geometry.attributes.position;
+      bp.setXYZ(1, s.body.position.x, s.body.position.y, 0);
+      bp.needsUpdate = true;
+      s.beam.material.opacity = (s.lit ? 0.85 : 0.3) * ease;
+      const f = (t * 0.45 + s.phase) % 1;          // packet travels core → node
+      s.packet.position.copy(s.body.position).multiplyScalar(f);
+      s.packet.material.opacity = Math.sin(f * Math.PI) * ease;
 
       // screen-space label
       s.body.getWorldPosition(v);
       v.project(camera);
       const x = (v.x * 0.5 + 0.5) * W, y = (-v.y * 0.5 + 0.5) * H;
-      const behind = v.z > 1;
+      const behind = v.z > 1 ||
+        (block && x > block.l && x < block.r && y > block.t && y < block.b);   // keep the title clean
       const showLabels = W > 560;
       s.label.style.opacity = behind || !showLabels ? '0' : String(Math.min(1, ease * 1.4) * (s.lit ? 1 : 0.82));
       s.label.style.pointerEvents = behind || !showLabels ? 'none' : 'auto';
