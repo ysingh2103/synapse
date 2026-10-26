@@ -17,7 +17,7 @@ const PROJECTS = [
     id: 'retail-network',
     name: 'Retail Network Lab',
     status: 'live', statusText: 'Live demo',
-    hue: '#4fe0a5',
+    hue: '#ff4d3d',
     tagline: 'An interactive 3D model of a retail company network: one head office and a 23-store chain.',
     about: 'Every device is wired the way a real retail environment would be. Click any device to inspect it, watch traffic move hop by hop, and work through realistic outages from first symptom to root cause.',
     highlights: [
@@ -35,7 +35,7 @@ const PROJECTS = [
     id: 'fault-trace',
     name: 'Store Fault Trace',
     status: 'live', statusText: 'Live prototype',
-    hue: '#5fd3ff',
+    hue: '#ff8a1f',
     tagline: 'A live troubleshooting view for one store that traces any failure back to its root cause.',
     about: 'Break something on purpose, such as a frozen camera, a cut cable, a power cut, a worn UPS battery or an ISP outage. It follows the failure through the power and network chain, groups related alerts into one incident and says who to send.',
     highlights: [
@@ -53,7 +53,7 @@ const PROJECTS = [
     id: 'infra-lab',
     name: 'Self-Hosted Infrastructure Lab',
     status: 'live', statusText: 'Complete · 11 write-ups',
-    hue: '#ffb547',
+    hue: '#ffc04d',
     tagline: 'A home lab built from scratch on VMware ESXi, with every failure diagnosed and documented like a real support ticket.',
     about: 'Linux administration, web and application servers, databases, containers, Kubernetes and monitoring. Each incident follows symptom, hypothesis, diagnostic steps, root cause, fix and verification.',
     highlights: [
@@ -71,7 +71,7 @@ const PROJECTS = [
     id: 'docvault',
     name: 'DocVault',
     status: 'build', statusText: 'In build · Phase 1 done',
-    hue: '#8aa4ff',
+    hue: '#ff3d7f',
     tagline: 'A small document-management web app on the stack enterprise support teams run.',
     about: 'Upload, list, filter and download documents. Files live on disk and metadata in PostgreSQL, served by a Java servlet app on Tomcat 10 behind an NGINX reverse proxy.',
     highlights: [
@@ -89,7 +89,7 @@ const PROJECTS = [
     id: 'ultron',
     name: 'Ultron',
     status: 'early', statusText: 'Early build',
-    hue: '#b394ff',
+    hue: '#d9dee8',
     tagline: 'A self-hosted incident trainer that injects real faults and times how long they take to fix.',
     about: 'Faults across Windows Server, Linux, IIS, Tomcat, SQL Server, Oracle, DB2, Active Directory and Kubernetes. The first pieces are running: a Flask health API and dashboard, and a heartbeat service that watches the lab server.',
     highlights: [
@@ -144,8 +144,32 @@ manifest.innerHTML = PROJECTS.map((p) => `
     </div>
   </li>`).join('');
 
-document.querySelector('.callsign').lastChild.textContent =
-  `Network online · ${SKILLS.length} inputs → ${PROJECTS.length} outputs`;
+const statusNode = document.querySelector('.callsign').lastChild;
+const STATUS = `Network online · ${SKILLS.length} inputs → ${PROJECTS.length} outputs`;
+statusNode.textContent = STATUS;
+
+/* ---------- Periodic glitch: a brief signal intrusion every 6–12 s ---------- */
+if (!reduceMotion) {
+  const root = document.documentElement;
+  const bands = document.querySelectorAll('.glitch-layer i');
+  const MESSAGES = ['Signal intrusion detected', 'Unauthorized process · rerouting', 'Core integrity 97% · recovering'];
+  let msg = 0;
+  const glitch = () => {
+    if (!document.hidden) {
+      bands.forEach((b) => {
+        b.style.top = (Math.random() * 100).toFixed(1) + '%';
+        b.style.height = (2 + Math.random() * 14).toFixed(0) + 'px';
+      });
+      root.classList.add('glitching');
+      statusNode.textContent = MESSAGES[msg++ % MESSAGES.length];
+      window.dispatchEvent(new CustomEvent('synapse:glitch'));
+      setTimeout(() => { root.classList.remove('glitching'); }, 640);
+      setTimeout(() => { statusNode.textContent = STATUS; }, 1400);
+    }
+    setTimeout(glitch, 6000 + Math.random() * 6000);
+  };
+  setTimeout(glitch, 3200);
+}
 
 /* ---------- Card tilt on pointer (desktop only) ---------- */
 if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
@@ -205,7 +229,7 @@ function dockAt(id) {
   } catch (e) { return; }   // no WebGL: the gradient background stays
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
-  const CYAN = '#62e6ff', ORANGE = '#ff7a1a', EMBER = '#ffb36b';
+  const RED = '#ff2a1f', ORANGE = '#ff7a1a', EMBER = '#ffb36b', WHITE_HOT = '#ffe4c9';
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 400);
@@ -220,7 +244,7 @@ function dockAt(id) {
   let dust;
   {
     const N = 1500, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
-    const tint = [new THREE.Color('#ffffff'), new THREE.Color('#9ff0ff'), new THREE.Color('#ffc08a')];
+    const tint = [new THREE.Color('#ffffff'), new THREE.Color('#ff8a6a'), new THREE.Color('#ffc08a')];
     for (let i = 0; i < N; i++) {
       const r = 30 + Math.random() * 140;
       const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
@@ -272,11 +296,11 @@ function dockAt(id) {
   const lineMat = (hex, op) => new THREE.LineBasicMaterial({
     color: hex, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false
   });
-  const ringA = new THREE.Line(circle(4.2), lineMat(CYAN, 0.55));
+  const ringA = new THREE.Line(circle(4.2), lineMat(RED, 0.7));
   const ringB = new THREE.Group();          // Ultron arcs
   [[0, 1.9], [2.4, 3.6], [4.3, 5.9]].forEach(([a, b]) => ringB.add(new THREE.Line(circle(5.6, 80, a, b), lineMat(ORANGE, 0.8))));
   const ringC = new THREE.Line(circle(7.2), new THREE.LineDashedMaterial({
-    color: CYAN, dashSize: 0.25, gapSize: 0.35, transparent: true, opacity: 0.35, depthWrite: false
+    color: EMBER, dashSize: 0.25, gapSize: 0.35, transparent: true, opacity: 0.35, depthWrite: false
   }));
   ringC.computeLineDistances();
   const ticks = [];
@@ -284,8 +308,8 @@ function dockAt(id) {
     const a = (k / 96) * Math.PI * 2, r1 = 6.3, r2 = k % 8 ? 6.55 : 6.9;
     ticks.push(new THREE.Vector3(Math.cos(a) * r1, 0, Math.sin(a) * r1), new THREE.Vector3(Math.cos(a) * r2, 0, Math.sin(a) * r2));
   }
-  const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(EMBER, 0.45));
-  const lens = glow(CYAN, 6); lens.material.opacity = 0.35;
+  const tickRing = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ticks), lineMat(ORANGE, 0.5));
+  const lens = glow(RED, 6.5); lens.material.opacity = 0.45;
   const lensHot = glow(ORANGE, 3); lensHot.material.opacity = 0.5;
   base.add(ringA, ringB, ringC, tickRing, lens, lensHot);
 
@@ -302,7 +326,7 @@ function dockAt(id) {
     return a;
   };
   const layerPos = [column(SKILLS.length, 1.12, LX[0]), grid(LX[1]), grid(LX[2]), column(PROJECTS.length, 1.32, LX[3])];
-  const LAYER_HEX = ['#c8f8ff', '#6fc4ff', '#ff8a3d', null];   // JARVIS → Ultron
+  const LAYER_HEX = [WHITE_HOT, '#ff3b2f', '#ff8a1f', null];   // white-hot → red → Ultron orange
 
   /* ---- neurons ---- */
   const neurons = layerPos.map((arr, li) => arr.map((p, ni) => {
@@ -312,7 +336,7 @@ function dockAt(id) {
     g.position.copy(p);
     const ball = new THREE.Mesh(new THREE.SphereGeometry(isOut ? 0.24 : isIn ? 0.17 : 0.15, 20, 20),
       new THREE.MeshBasicMaterial({ color: hex }));
-    const halo = glow(hex, isOut ? 2.4 : 1.4);
+    const halo = glow(hex, isOut ? 2.9 : 1.8);
     g.add(ball, halo);
     let shell = null;
     if (isOut || isIn) {
@@ -321,7 +345,7 @@ function dockAt(id) {
       g.add(shell);
     }
     net.add(g);
-    return { g, ball, halo, shell, act: 0, rest: isOut ? 0.45 : 0.22, li, ni, hex };
+    return { g, ball, halo, shell, act: 0, rest: isOut ? 0.6 : 0.34, li, ni, hex };
   }));
 
   /* ---- synapses ---- */
@@ -347,7 +371,7 @@ function dockAt(id) {
   net.add(new THREE.LineSegments(eGeo, eMat));
 
   // resting wires fade from dim cyan (inputs) to dim orange (outputs)
-  const DIM_C = new THREE.Color('#25529c'), DIM_O = new THREE.Color('#8a3a12'), FAINT = new THREE.Color('#121947');
+  const DIM_C = new THREE.Color('#7a1d14'), DIM_O = new THREE.Color('#a8460f'), FAINT = new THREE.Color('#1c0806');
   const restAt = (depth) => DIM_C.clone().lerp(DIM_O, depth / 3);
   const tmp = new THREE.Color();
   let focus = null;      // { kind: 'p' | 's', i, color }
@@ -365,7 +389,7 @@ function dockAt(id) {
   paintEdges();
 
   /* ---- signal pulses ---- */
-  const pool = Array.from({ length: 240 }, () => {
+  const pool = Array.from({ length: 420 }, () => {
     const s = glow('#ffffff', 0.55);
     s.visible = false;
     net.add(s);
@@ -377,10 +401,10 @@ function dockAt(id) {
     if (!p) return;
     p.free = false; p.e = e; p.t0 = now + delay; p.dur = 0.55 + rnd() * 0.15; p.k = strength;
     p.s.material.color.set(hex);
-    p.s.scale.setScalar(strength > 0.6 ? 0.62 : 0.38);
+    p.s.scale.setScalar(strength > 0.6 ? 0.78 : 0.46);
   }
   let passIdx = 0;
-  const PASS_HEX = [CYAN, EMBER];   // signal heats up as it moves through the layers
+  const PASS_HEX = [WHITE_HOT, RED];   // signal heats up as it moves through the layers
   function forwardPass(k) {
     PROJECTS[k].inputs.forEach((s) => { neurons[0][s].act = 1; });
     edges.forEach((e) => {
@@ -416,7 +440,7 @@ function dockAt(id) {
   });
 
   function setFocus(kind, i) {
-    const next = kind ? { kind, i, color: new THREE.Color(kind === 'p' ? PROJECTS[i].hue : CYAN) } : null;
+    const next = kind ? { kind, i, color: new THREE.Color(kind === 'p' ? PROJECTS[i].hue : ORANGE) } : null;
     if ((!focus && !next) || (focus && next && focus.kind === next.kind && focus.i === next.i)) return;
     focus = next;
     paintEdges();
@@ -527,7 +551,11 @@ function dockAt(id) {
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) loop(); }).observe(hero);
 
   const v = new THREE.Vector3(), wp = new THREE.Vector3();
-  let intro = 0, nextPass = 1.2, nextAmbient = 0;
+  let intro = 0, nextPass = 1.2, nextAmbient = 0, glitchUntil = -1;
+  window.addEventListener('synapse:glitch', () => {
+    glitchUntil = now + 0.62;
+    for (let i = 0; i < 40; i++) fire(edges[(rnd() * edges.length) | 0], rnd() * 0.3, RED, 1);
+  });
 
   function placeLabel(el, n) {
     n.g.getWorldPosition(wp);
@@ -569,16 +597,26 @@ function dockAt(id) {
     tickRing.rotation.y = -now * 0.12;
     lensHot.material.opacity = 0.35 + Math.sin(now * 2.4) * 0.15;
     dust.rotation.y = now * 0.01;
-    eMat.opacity = 0.95 * ease;
+    eMat.opacity = ease;
+
+    // glitch: the network tears, flickers and floods red for a moment
+    if (now < glitchUntil) {
+      net.position.x = (rnd() - 0.5) * 0.5;
+      eMat.opacity = 0.3 + rnd() * 1.2;
+      lensHot.material.opacity = 1;
+      if (rnd() < 0.5) neurons[(rnd() * 4) | 0].forEach((n) => { n.act = Math.max(n.act, rnd()); });
+    } else {
+      net.position.x = 0;
+    }
 
     if (now > nextPass && !focus) {
       forwardPass(passIdx % PROJECTS.length);
       passIdx++;
-      nextPass = now + 2.8;
+      nextPass = now + 1.7;
     }
     if (now > nextAmbient) {
-      fire(edges[(rnd() * edges.length) | 0], 0, rnd() < 0.55 ? '#7fd8ff' : '#ff9a4d', 0.4);
-      nextAmbient = now + 0.07;
+      fire(edges[(rnd() * edges.length) | 0], 0, rnd() < 0.5 ? '#ff3b2f' : '#ff9a4d', 0.5);
+      nextAmbient = now + 0.03;
     }
 
     pool.forEach((p) => {
