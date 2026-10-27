@@ -51,7 +51,7 @@ python3 -m http.server 8000
 
 ### Deploy on GitHub Pages
 
-Repo **Settings → Pages → Deploy from a branch → `main` / root**. The site goes live at `https://ysingh2103.github.io/starforge/`.
+Repo **Settings → Pages → Deploy from a branch → `main` / root**. The site goes live at `https://ysingh2103.github.io/synapse/`.
 
 ## Author
 

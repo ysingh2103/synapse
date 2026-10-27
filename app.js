@@ -431,7 +431,7 @@ async function checkRow(row) {
       return r.ok ? ['up', 'ONLINE', `Responded in ${ms} ms`] : ['down', 'ERROR ' + r.status, ''];
     }
     if (row.url === 'github') {
-      const [r, ms] = await timed(() => fetch('https://api.github.com/repos/ysingh2103/starforge', { cache: 'no-store' }));
+      const [r, ms] = await timed(() => fetch('https://api.github.com/repos/ysingh2103/synapse', { cache: 'no-store' }));
       if (!r.ok) return ['unknown', "CAN'T CHECK", `GitHub answered ${r.status}`];
       const j = await r.json();
       return ['up', 'LINKED', `Last update ${ago(j.pushed_at)} · ${ms} ms`];
