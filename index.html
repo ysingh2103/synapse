@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Yuvraj Singh's Synapse</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Yuvraj Singh's Synapse, home to all his innovations. Live demos, GitHub repos and what each one does.">
+<meta name="description" content="Yuvraj Singh's Synapse: a living map of projects, technical skills and experiments across IT infrastructure, networking, automation and software development.">
 <meta property="og:title" content="Yuvraj Singh's Synapse">
-<meta property="og:description" content="Every project I've built, in one place: live 3D network labs, incident write-ups, a document-management system and an incident trainer.">
+<meta property="og:description" content="Connecting ideas. Building systems. Solving problems. A living map of my projects and the skills behind them.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ysingh2103.github.io/starforge/">
 <meta property="og:image" content="https://ysingh2103.github.io/starforge/og-image.png">
@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -30,55 +30,104 @@
     <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"></span>SYNAPSE</a>
     <div class="topnav">
       <a href="#projects">Projects</a>
+      <a href="#stack">Stack</a>
+      <a href="#simulator">Simulator</a>
+      <a href="#status">Status</a>
       <a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Portfolio</a>
-      <a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="nav-cta" href="#projects">Explore projects</a>
+      <a class="nav-cta" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
     </div>
   </nav>
 
   <div class="hero-inner">
     <div class="copy">
-      <p class="callsign"><span class="pulse" aria-hidden="true"></span><span class="status-text">Yuvraj Singh's Synapse</span></p>
-      <h1 class="headline">Every project I've built, in one place.</h1>
-      <p class="lede">Home to all my innovations: live demos, source code and the skills behind each one, from networking labs to an incident trainer.</p>
+      <p class="eyebrow">Yuvraj Singh <span aria-hidden="true">/</span> Systems &amp; Technology</p>
+      <h1 class="headline">Connecting ideas. Building systems. Solving problems.</h1>
+      <p class="lede">A living map of my projects, technical skills and experiments across IT infrastructure, networking, automation and software development.</p>
       <div class="hero-actions">
-        <a class="btn btn-solid" href="#projects">Explore projects</a>
-        <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-solid" href="#projects">Explore My Projects</a>
+        <a class="btn btn-ghost" href="https://github.com/ysingh2103" target="_blank" rel="noopener">View GitHub</a>
       </div>
-      <p class="hint" aria-hidden="true">The network maps my skills to my projects. Drag to turn it; hover a skill to see what it powers.</p>
     </div>
-    <div class="net-space" aria-hidden="true"></div>
+    <div class="net-space">
+      <div class="net-hud">
+        <p class="net-tip" id="net-tip">Click a skill to pin its connections. Click a project to open it.</p>
+        <button type="button" class="net-reset" id="net-reset">Reset view</button>
+      </div>
+      <aside class="net-panel" id="net-panel" hidden aria-live="polite"></aside>
+      <p class="net-fallback" id="net-fallback" hidden>The interactive network needs WebGL, which isn't available in this browser. Every project is listed below.</p>
+    </div>
   </div>
 </header>
 
-<main id="projects">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Projects</h2>
-      <p>Five projects, from live demos to systems still in the build. Hover a card to light its path in the network.</p>
+<main>
+  <section class="band" id="projects">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Projects</h2>
+        <p>Five projects as short case studies, each with a real screenshot. Hover a card to light its path in the network.</p>
+      </div>
+      <ol class="manifest" id="manifest"><!-- filled by app.js --></ol>
+      <noscript>
+        <p>Turn on JavaScript to see the project cards. Repos: github.com/ysingh2103/retail-network, github.com/ysingh2103/Infra-lab, github.com/ysingh2103/docvault, github.com/ysingh2103/Ultron</p>
+      </noscript>
     </div>
+  </section>
 
-    <ol class="manifest" id="manifest"><!-- filled by app.js --></ol>
-    <noscript>
-      <p>Turn on JavaScript to see the project cards. Repos: github.com/ysingh2103/retail-network, github.com/ysingh2103/Infra-lab, github.com/ysingh2103/docvault, github.com/ysingh2103/Ultron</p>
-    </noscript>
-  </div>
+  <section class="band" id="stack">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Technology stack</h2>
+        <p>Only tools I've actually used in these projects. Click one to see which projects use it.</p>
+      </div>
+      <div class="stack-grid" id="stack-grid"></div>
+      <p class="stack-result" id="stack-result" aria-live="polite">Pick a technology to highlight its projects.</p>
+    </div>
+  </section>
+
+  <section class="band" id="simulator">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Incident simulator</h2>
+        <p>Try a troubleshooting ticket yourself. Investigate the components, read the diagnostics, then name the root cause. Everything here is simulated.</p>
+      </div>
+      <div class="sim reveal" id="sim"></div>
+    </div>
+  </section>
+
+  <section class="band" id="status">
+    <div class="wrap status-wrap">
+      <div class="section-head reveal">
+        <h2>System status</h2>
+        <p>Checked live from your browser each time the page loads. Nothing is shown as online unless the check passes.</p>
+      </div>
+      <div class="status-panel reveal" id="status-panel">
+        <div class="sp-head"><span>SYNAPSE / SYSTEM STATUS</span><button type="button" class="sp-recheck" id="sp-recheck">Recheck</button></div>
+        <ul class="sp-rows" id="sp-rows"></ul>
+        <div class="sp-foot"><span>ENVIRONMENT: GITHUB PAGES</span><span id="sp-time">Checking…</span></div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="foot">
+  <canvas class="foot-net" id="foot-net" aria-hidden="true"></canvas>
   <div class="wrap foot-inner">
-    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"></span>Yuvraj Singh</a>
+    <div class="foot-brand">
+      <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"></span>SYNAPSE</a>
+      <p class="foot-line">Ideas become systems. Systems become solutions.</p>
+    </div>
     <ul class="foot-links">
+      <li><a href="#projects">Projects</a></li>
       <li><a href="https://ysingh2103.github.io/" target="_blank" rel="noopener">Portfolio</a></li>
-      <li><a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a></li>
       <li><a href="https://github.com/ysingh2103" target="_blank" rel="noopener">GitHub</a></li>
-      <li><button type="button" class="copy-mail" id="copy-email" data-email="ys.gill21@gmail.com">ys.gill21@gmail.com</button></li>
+      <li><a href="https://linkedin.com/in/y-singh-gill" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><button type="button" class="copy-mail" id="copy-email" data-email="ys.gill21@gmail.com">Contact: ys.gill21@gmail.com</button></li>
     </ul>
   </div>
+  <div class="wrap foot-base">Designed and built by Yuvraj Singh</div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="app.js?v=10"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>

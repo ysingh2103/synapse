@@ -1,13 +1,20 @@
 # Yuvraj Singh's Synapse
 
-*Home to all his innovations.*
+*Connecting ideas. Building systems. Solving problems.*
 
-**Every project I've built, in one place.**
 Live site: **https://ysingh2103.github.io/starforge/**
 
-Synapse is my project network, in a clean black-and-white style. A live 3D neural network sits beside the intro: my skills form the input layer, three hidden layers sit in the middle, and each project is an output neuron. It turns slowly on its own (drag to turn it), and hovering a skill lights up every project it powers. Click a project neuron (or its label) to jump to that project's card, where you'll find what it does, the tech behind it, the GitHub repo and where it's hosted.
+Synapse is a living map of my projects, technical skills and experiments across IT infrastructure, networking, automation and software development.
 
-## Output layer
+## What's on the page
+
+- **Interactive 3D neural network.** My skills are the input layer and my projects are the outputs. Click a skill to pin its connections (unrelated nodes dim); click a project to open a panel with what it does, its tech, GitHub and live demo. It turns slowly when idle, pauses while you interact, and has a Reset view button.
+- **Project case studies** with real screenshots, tags, and buttons for the live demo, source code and an expandable case study. Hovering a card lights its path in the network.
+- **Technology stack** grouped into Networking, Infrastructure, Web development and Databases & applications. Click a technology to highlight the projects that use it.
+- **Incident simulator** with three troubleshooting tickets (store payments down, DNS at head office, a full DHCP scope). Investigate the components, read the diagnostics and name the root cause. Fully simulated.
+- **Live system status** checked from the visitor's browser: the site, the hosted demos and the source repo. Nothing is shown as online unless the check passes.
+
+## Projects
 
 | Project | What it is | Code | Hosted at |
 |---|---|---|---|
