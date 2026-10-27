@@ -2,7 +2,7 @@
 
 *Connecting ideas. Building systems. Solving problems.*
 
-Live site: **https://ysingh2103.github.io/starforge/**
+Live site: **https://ysingh2103.github.io/synapse/**
 
 Synapse is a living map of my projects, technical skills and experiments across IT infrastructure, networking, automation and software development.
 
