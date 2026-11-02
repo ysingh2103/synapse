@@ -8,11 +8,12 @@ Synapse is a living map of my projects, technical skills and experiments across 
 
 ## What's on the page
 
-- **Interactive 3D neural network.** My skills are the input layer and my projects are the outputs. Click a skill to pin its connections (unrelated nodes dim); click a project to open a panel with what it does, its tech, GitHub and live demo. It turns slowly when idle, pauses while you interact, and has a Reset view button.
-- **Project case studies** with real screenshots, tags, and buttons for the live demo, source code and an expandable case study. Hovering a card lights its path in the network.
-- **Technology stack** grouped into Networking, Infrastructure, Web development and Databases & applications. Click a technology to highlight the projects that use it.
-- **Incident simulator** with three troubleshooting tickets (store payments down, DNS at head office, a full DHCP scope). Investigate the components, read the diagnostics and name the root cause. Fully simulated.
-- **Live system status** checked from the visitor's browser: the site, the hosted demos and the source repo. Nothing is shown as online unless the check passes.
+- **Interactive 3D neural network** as the hero. Skills are the inputs, projects are the outputs, and the middle layers read Diagnose, Build, Document. Glowing neurons with bloom, curved wiring, signals with comet tails, and a boot-up animation on load. Click a skill to pin its connections; click a project to open its panel.
+- **The network unfolds as you scroll.** Its fibres stretch and snap into hanging threads, the neurons scatter into the background, and the project neurons follow the reader and dock into their cards. A spine links the page: skills patch into the Stack tools, the spine breaks at the simulator until a ticket is solved, beats into the status panel, and fires the logo at the footer.
+- **Particle scenes** behind each section: a brain, a layer stack, a magnifying glass, a broadcast tower and a synapse.
+- **Project cards** with headline numbers, build progress, "Powered by" skill links, live demos you can try inside the card, and a case-study panel.
+- **Technology stack**, **incident simulator** with three tickets, and **live system status** checked from the visitor's browser.
+- Smooth scrolling, an electric cursor and a dark theme that matches the [main portfolio](https://ysingh2103.github.io/).
 
 ## Projects
 
@@ -26,7 +27,7 @@ Synapse is a living map of my projects, technical skills and experiments across 
 
 ## Tech
 
-Plain HTML, CSS and JavaScript with [three.js](https://threejs.org/) r128 from a CDN. No build step.
+Plain HTML, CSS and JavaScript with [three.js](https://threejs.org/) r128 (plus its bloom post-processing) and [Lenis](https://github.com/darkroomengineering/lenis) from a CDN. No build step.
 
 ```
 index.html   page structure
